@@ -72,15 +72,49 @@ public class NewHomeActivity extends NexusLauncherActivity {
         context.startActivity(intent);
     }
 
+    private static final String SETTINGS_BADGE_TAG = "aegis_settings_badge";
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         SharedPreferences sharedPreferences = getSharedPreferences(LauncherFiles.SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
         super.onCreate(savedInstanceState);
         showMenuKey();
         mUiHandler = new Handler(getMainLooper());
-        alertForMeizu();
-        alertForDonate();
+        // Aegis: upstream's donation dialog removed -- this fork does not ask for money.
+        alertForDoze();
         mDirectlyBack = sharedPreferences.getBoolean(SettingsActivity.DIRECTLY_BACK_KEY, false);
+        addAegisSettingsBadge();
+    }
+
+    /**
+     * Aegis OS: a persistent settings gear pinned to the home screen, like a
+     * real OS would have.  The Launcher3 overview gear (long-press wallpaper)
+     * and the MENU key open the same Aegis OS settings hub.
+     */
+    private void addAegisSettingsBadge() {
+        try {
+            android.widget.FrameLayout dragLayer = findViewById(com.android.launcher3.R.id.drag_layer);
+            if (dragLayer == null || dragLayer.findViewWithTag(SETTINGS_BADGE_TAG) != null) {
+                return;
+            }
+            android.widget.ImageView gear = new android.widget.ImageView(this);
+            gear.setTag(SETTINGS_BADGE_TAG);
+            gear.setImageResource(android.R.drawable.ic_menu_preferences);
+            gear.setColorFilter(0xFF3DDC84);
+            gear.setBackgroundResource(R.drawable.aegis_settings_badge_bg);
+            gear.setContentDescription(getString(R.string.aegis_os_title));
+            int size = (int) (48 * getResources().getDisplayMetrics().density);
+            int margin = (int) (20 * getResources().getDisplayMetrics().density);
+            android.widget.FrameLayout.LayoutParams lp = new android.widget.FrameLayout.LayoutParams(size, size);
+            lp.gravity = android.view.Gravity.BOTTOM | android.view.Gravity.END;
+            lp.rightMargin = margin;
+            lp.bottomMargin = margin / 2;
+            gear.setOnClickListener(v -> onSettingsClicked());
+            dragLayer.addView(gear, lp);
+        } catch (Throwable t) {
+            // never let a cosmetic badge break the home screen
+            VLog.w("AegisHome", "settings badge skipped: " + t);
+        }
     }
 
     private void installXposed() {

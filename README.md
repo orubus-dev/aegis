@@ -20,12 +20,45 @@ archive. NDK 23 native build fixed (`APP_PLATFORM android-21`). Launcher3
 vendored into the repo. CI builds `aosp` + `fdroid` debug APKs (~8 MB) on
 every push — see the Actions artifacts.
 
-**Next (M1): the actual Android 13–16 port.** Upstream's hook layer was
-written for Android ≤ 12; every system-service proxy in
-`VirtualApp/lib/src/main/java/com/lody/virtual/client/hook/proxies/`
-(50+ services) and the hidden-API reflection path need Q→16 updates, plus
-device testing. Guest apps may crash on Android 13+ until then — that's the
-work, not a regression.
+## Status: M1 in progress (0.23.0-aegis-m1)
+
+**M1 shipped so far:**
+
+- *Android 13–15 engine compat (the core port work)*
+  - Hidden-API bypass rebuilt on LSPosed **HiddenApiBypass 6.2** (vendored,
+    Apache-2.0) — the old free_reflection meta-reflection trick is dead on
+    Android 12+; this is the bypass path that works P→15+. Runs first in
+    `VirtualCore.startup()` in **every** process (host, server, guests).
+  - Numeric hardening across all service proxies: Android 13 migrated
+    several binder interfaces from `int` to `long` flags; raw `(int) args[n]`
+    casts now go through `MethodProxy.asInt/asLong` instead.
+  - `BuildCompat` gates for T/U/V (13/14/15) + W (16).
+  - Delegate-last classloader setup survives 13–15 builds missing
+    `android.test.base.jar`.
+  - Host `targetSdk` 23 → 24 (Android 15 refuses to install targetSdk < 24).
+- *Aegis OS shell (the "hidden OS" feel)*
+  - Persistent **settings gear** on the Launcher3 home + overview gear +
+    MENU key → **Aegis OS settings hub** (dark, in-container).
+  - The hub: guest app manager, **import from installed apps**,
+    **import from APK file** (SAF — installs into the container only,
+    never on the device), Secure Vault, Secure Camera, engine diagnostics.
+  - Home label → "Aegis"; upstream donation dialog removed.
+- *Aegis Vault (at-rest crypto)*
+  - `AEGV1` format: AndroidKeyStore AES-256 master key (StrongBox when
+    available), fresh 256-bit key per file wrapped by the master key,
+    1 MiB chunked AES-256-GCM frames, chunk counter IVs, chunk index +
+    file id bound as AAD (tamper/reorder/truncate detection), zero-shred
+    on delete, decrypt-on-view into a private cache that is shredded on
+    exit.
+
+**Still honest:** container *compiles* and *installs* on Android 13–15
+(targetSdk 24), but **guest runtime verification on real 13–15 devices is
+the remaining M1 work**. The fixes above are the known-correct ones; the
+claim "guests run on 13–15" waits for a real device run of a real guest app.
+
+**M1 backlog (next grinds):** per-SDK `bindApplication`/mirror variance
+checks on 13/14/15, AppOps op-code remap audit, notification channels for
+guests targeting ≥ 26, guest-media auto-vault hook, Android 16 (W) pass.
 
 ## Build
 
