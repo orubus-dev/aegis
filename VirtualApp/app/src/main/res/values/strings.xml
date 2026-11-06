@@ -1,7 +1,7 @@
 <resources>
     <!--<string name="app_name">VirtualApp</string>-->
     <string name="app_name">VirtualXposed</string>
-    <string name="vxp">VirtualXposed</string>
+    <string name="vxp">Aegis</string>
     <string name="wait">Please wait…</string>
     <string name="desktop">Desktop</string>
     <string name="add_app">Add App</string>
@@ -185,4 +185,56 @@ Currently, EXposed has been put on the app store and renamed to Tai Chi. You can
     <string name="install_go_latest_exp">Install the latest TaiChi</string>
     <string name="install_complete_and_open">Open</string>
     <string name="unsupported_for_32bit_app">32bits App is not supported!</string>
+    <!-- ============ Aegis OS ============ -->
+    <string name="aegis_os_title">Aegis OS</string>
+    <string name="aegis_version_line">Aegis OS %1$s \u2022 host Android %2$s</string>
+    <string name="aegis_section_apps">APPS</string>
+    <string name="aegis_section_privacy">PRIVACY</string>
+    <string name="aegis_section_system">SYSTEM</string>
+    <string name="aegis_row_apps">My apps</string>
+    <string name="aegis_row_add_app">Add app (from this phone)</string>
+    <string name="aegis_row_add_apk">Add app (from APK file)</string>
+    <string name="aegis_row_vault">Secure vault (photos &amp; videos)</string>
+    <string name="aegis_row_camera">Secure camera</string>
+    <string name="aegis_row_engine">Engine settings (advanced)</string>
+    <string name="aegis_row_about">About Aegis</string>
+    <string name="aegis_footer">Apps inside Aegis run in a sealed container. Photos and videos in the vault are encrypted with AES-256-GCM; keys live in the hardware keystore when available.</string>
+    <string name="aegis_engine_guests">Guest apps installed: %1$d</string>
+    <string name="aegis_engine_hiddenapi_ok">Engine: hidden-API bypass ACTIVE (Android 13-15 compatibility layer)</string>
+    <string name="aegis_engine_hiddenapi_bad">Engine: hidden-API bypass NOT verified on this device \u2014 guest apps may fail to start. Report your device model to support.</string>
+
+    <!-- Apk import -->
+    <string name="apk_import_title">Import app into Aegis</string>
+    <string name="apk_import_hint">Pick an APK file. It will be installed inside Aegis only \u2014 never on your phone.</string>
+    <string name="apk_import_pick">Choose APK file</string>
+    <string name="apk_import_copying">Copying APK\u2026</string>
+    <string name="apk_import_installing">Installing into Aegis\u2026</string>
+    <string name="apk_import_done">App installed into Aegis</string>
+    <string name="apk_import_failed">Install failed: %1$s</string>
+    <string name="apk_import_failed_generic">Import failed \u2014 the file may not be a valid APK.</string>
+
+    <!-- Vault -->
+    <string name="vault_title">Secure Vault</string>
+    <string name="vault_hint">Everything here is encrypted with AES-256-GCM. Keys live in your phone\'s hardware keystore. Tap to open, long-press for export/delete.</string>
+    <string name="vault_empty">Vault is empty. Capture or import photos/videos to store them encrypted.</string>
+    <string name="vault_btn_camera">Camera</string>
+    <string name="vault_btn_import">Import</string>
+    <string name="vault_capture_title">Secure Camera</string>
+    <string name="vault_capture_hint">Photos and videos taken here go straight into the encrypted vault \u2014 they never touch your normal gallery.</string>
+    <string name="vault_btn_photo">Take photo</string>
+    <string name="vault_btn_video">Record video</string>
+    <string name="vault_saved">Encrypted into vault</string>
+    <string name="vault_importing">Encrypting into vault\u2026</string>
+    <string name="vault_import_failed">Encryption failed</string>
+    <string name="vault_capture_empty">Nothing captured</string>
+    <string name="vault_camera_missing">No camera app available</string>
+    <string name="vault_too_large">File too large for the vault (512 MB limit)</string>
+    <string name="vault_picker_missing">No file picker available</string>
+    <string name="vault_decrypt_failed">Decryption failed \u2014 file may be corrupted or tampered</string>
+    <string name="vault_item_actions">Vault item</string>
+    <string name="vault_action_export">Export (decrypt out)</string>
+    <string name="vault_action_delete">Delete securely</string>
+    <string name="vault_delete_confirm_title">Delete from vault?</string>
+    <string name="vault_delete_confirm_body">The encrypted file will be overwritten with zeros and removed. This cannot be undone.</string>
+    <string name="vault_exported">Exported (decrypted)</string>
 </resources>

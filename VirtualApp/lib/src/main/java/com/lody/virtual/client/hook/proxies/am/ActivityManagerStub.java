@@ -155,7 +155,7 @@ public class ActivityManagerStub extends MethodInvocationProxy<MethodInvocationS
 
         @Override
         public Object call(Object who, Method method, Object... args) {
-            int userId = (int) args[0];
+            int userId = asInt(args[0]);
             return userId == 0;
         }
     }

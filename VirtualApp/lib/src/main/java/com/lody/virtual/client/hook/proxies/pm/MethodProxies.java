@@ -158,7 +158,7 @@ class MethodProxies {
         @Override
         public Object call(Object who, Method method, Object... args) throws Throwable {
             ComponentName componentName = (ComponentName) args[0];
-            int flags = (int) args[1];
+            int flags = asInt(args[1]);
             int userId = VUserHandle.myUserId();
             ServiceInfo info = VPackageManager.get().getServiceInfo(componentName, flags, userId);
             if (info != null) {
@@ -223,7 +223,7 @@ class MethodProxies {
                 return method.invoke(who, args);
             }
             int userId = VUserHandle.myUserId();
-            int flags = (int) args[1];
+            int flags = asInt(args[1]);
             ActivityInfo info = VPackageManager.get().getActivityInfo(componentName, flags, userId);
             if (info == null) {
                 info = (ActivityInfo) method.invoke(who, args);
@@ -274,13 +274,13 @@ class MethodProxies {
                                     return vInstaller.createSession(params, installerPackageName, VUserHandle.myUserId());
                                 }
                                 case "updateSessionAppIcon": {
-                                    int sessionId = (int) args[0];
+                                    int sessionId = asInt(args[0]);
                                     Bitmap appIcon = (Bitmap) args[1];
                                     vInstaller.updateSessionAppIcon(sessionId, appIcon);
                                     return 0;
                                 }
                                 case "updateSessionAppLabel": {
-                                    int sessionId = (int) args[0];
+                                    int sessionId = asInt(args[0]);
                                     String appLabel = (String) args[1];
                                     vInstaller.updateSessionAppLabel(sessionId, appLabel);
                                     return 0;
@@ -306,7 +306,7 @@ class MethodProxies {
                                 }
                                 case "getMySessions": {
                                     String installerPackageName = (String) args[0];
-                                    int userId = (int) args[1];
+                                    int userId = asInt(args[1]);
                                     return ParceledListSliceCompat.create(
                                             vInstaller.getMySessions(installerPackageName, userId).getList()
                                     );
@@ -322,7 +322,7 @@ class MethodProxies {
                                     return 0;
                                 }
                                 case "setPermissionsResult": {
-                                    int sessionId = (int) args[0];
+                                    int sessionId = asInt(args[0]);
                                     boolean accepted = (boolean) args[1];
                                     vInstaller.setPermissionsResult(sessionId, accepted);
                                     return 0;
@@ -418,7 +418,7 @@ class MethodProxies {
         @Override
         public Object call(Object who, Method method, Object... args) throws Throwable {
             String name = (String) args[0];
-            int flags = (int) args[1];
+            int flags = asInt(args[1]);
             int userId = VUserHandle.myUserId();
             ProviderInfo info = VPackageManager.get().resolveContentProvider(name, flags, userId);
             if (info == null) {
@@ -567,7 +567,7 @@ class MethodProxies {
         public Object call(Object who, Method method, Object... args) throws Throwable {
             Intent intent = (Intent) args[0];
             String resolvedType = (String) args[1];
-            int flags = (int) args[2];
+            int flags = asInt(args[2]);
             int userId = VUserHandle.myUserId();
             ResolveInfo resolveInfo = VPackageManager.get().resolveService(intent, resolvedType, flags, userId);
             if (resolveInfo == null) {
@@ -602,7 +602,7 @@ class MethodProxies {
         @Override
         public Object call(Object who, Method method, Object... args) throws Throwable {
             String name = (String) args[0];
-            int flags = (int) args[1];
+            int flags = asInt(args[1]);
             PermissionGroupInfo info = VPackageManager.get().getPermissionGroupInfo(name, flags);
             if (info != null) {
                 return info;
@@ -632,7 +632,7 @@ class MethodProxies {
         @Override
         public Object call(Object who, Method method, Object... args) throws Throwable {
             String pkg = (String) args[0];
-            int flags = (int) args[1];
+            int flags = asInt(args[1]);
             int userId = VUserHandle.myUserId();
             PackageInfo packageInfo = VPackageManager.get().getPackageInfo(pkg, flags, userId);
             if (packageInfo != null) {
@@ -749,7 +749,7 @@ class MethodProxies {
 
         @Override
         public Object call(Object who, Method method, Object... args) throws Throwable {
-            int uid = (int) args[0];
+            int uid = asInt(args[0]);
             int callingUid = Binder.getCallingUid();
             if (uid == VirtualCore.get().myUid()) {
                 uid = getBaseVUid();
@@ -789,8 +789,8 @@ class MethodProxies {
         @Override
         public Object call(Object who, Method method, Object... args) throws Throwable {
             String processName = (String) args[0];
-            int uid = (int) args[1];
-            int flags = (int) args[2];
+            int uid = asInt(args[1]);
+            int flags = asInt(args[2]);
             List<ProviderInfo> infos = VPackageManager.get().queryContentProviders(processName, uid, flags);
             if (ParceledListSliceCompat.isReturnParceledListSlice(method)) {
                 return ParceledListSliceCompat.create(infos);
@@ -877,8 +877,8 @@ class MethodProxies {
 
         @Override
         public Object call(Object who, Method method, Object... args) throws Throwable {
-            int uid1 = (int) args[0];
-            int uid2 = (int) args[1];
+            int uid1 = asInt(args[0]);
+            int uid2 = asInt(args[1]);
             // TODO: verify the signatures by uid.
             return PackageManager.SIGNATURE_MATCH;
         }
@@ -893,7 +893,7 @@ class MethodProxies {
 
         @Override
         public Object call(Object who, Method method, Object... args) throws Throwable {
-            int uid = (int) args[0];
+            int uid = asInt(args[0]);
             return VPackageManager.get().getNameForUid(uid);
         }
     }
@@ -951,7 +951,7 @@ class MethodProxies {
         public Object call(Object who, Method method, Object... args) throws Throwable {
             Intent intent = (Intent) args[0];
             String resolvedType = (String) args[1];
-            int flags = (int) args[2];
+            int flags = asInt(args[2]);
             int userId = VUserHandle.myUserId();
             ResolveInfo resolveInfo = VPackageManager.get().resolveIntent(intent, resolvedType, flags, userId);
             if (resolveInfo == null) {
@@ -972,7 +972,7 @@ class MethodProxies {
         @Override
         public Object call(Object who, Method method, Object... args) throws Throwable {
             String pkg = (String) args[0];
-            int flags = (int) args[1];
+            int flags = asInt(args[1]);
             if (getHostPkg().equals(pkg)) {
                 return method.invoke(who, args);
             }
@@ -1005,7 +1005,7 @@ class MethodProxies {
         @Override
         public Object call(Object who, Method method, Object... args) throws Throwable {
             ComponentName componentName = (ComponentName) args[0];
-            int flags = (int) args[1];
+            int flags = asInt(args[1]);
             if (getHostPkg().equals(componentName.getPackageName())) {
                 return method.invoke(who, args);
             }
@@ -1072,7 +1072,7 @@ class MethodProxies {
 
         @Override
         public Object call(Object who, Method method, Object... args) throws Throwable {
-            int flags = (int) args[0];
+            int flags = asInt(args[0]);
             int userId = VUserHandle.myUserId();
             List<PackageInfo> packageInfos;
             if (isAppProcess()) {
@@ -1137,7 +1137,7 @@ class MethodProxies {
             if (getHostPkg().equals(componentName.getPackageName())) {
                 return method.invoke(who, args);
             }
-            int flags = (int) args[1];
+            int flags = asInt(args[1]);
             ActivityInfo info = VPackageManager.get().getReceiverInfo(componentName, flags, 0);
             if (info == null) {
                 info = (ActivityInfo) method.invoke(who, args);

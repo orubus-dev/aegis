@@ -198,7 +198,8 @@ public class NewHomeActivity extends NexusLauncherActivity {
     }
 
     private void onSettingsClicked() {
-        startActivity(new Intent(NewHomeActivity.this, SettingsActivity.class));
+        // Aegis OS: the home settings icon opens the in-OS settings hub.
+        startActivity(new Intent(NewHomeActivity.this, com.aegis.os.AegisSettingsActivity.class));
     }
 
     @Override

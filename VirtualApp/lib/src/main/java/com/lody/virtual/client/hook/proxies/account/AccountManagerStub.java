@@ -260,8 +260,8 @@ public class AccountManagerStub extends BinderInvocationProxy {
 		public Object call(Object who, Method method, Object... args) throws Throwable {
 			IAccountManagerResponse response = (IAccountManagerResponse) args[0];
 			Account account = (Account) args[1];
-			int userFrom = (int) args[2];
-			int userTo = (int) args[3];
+			int userFrom = asInt(args[2]);
+			int userTo = asInt(args[3]);
 			method.invoke(who, args);
 			return 0;
 		}
@@ -367,7 +367,7 @@ public class AccountManagerStub extends BinderInvocationProxy {
 		public Object call(Object who, Method method, Object... args) throws Throwable {
 			Account account = (Account) args[0];
 			String authTokenType = (String) args[1];
-			int uid = (int) args[2];
+			int uid = asInt(args[2]);
 			boolean val = (boolean) args[3];
 			method.invoke(who, args);
 			return 0;
@@ -521,7 +521,7 @@ public class AccountManagerStub extends BinderInvocationProxy {
 		@Override
 		public Object call(Object who, Method method, Object... args) throws Throwable {
 			Account account = (Account) args[0];
-			int userId = (int) args[1];
+			int userId = asInt(args[1]);
 			return method.invoke(who, args);
 		}
 	}
@@ -534,7 +534,7 @@ public class AccountManagerStub extends BinderInvocationProxy {
 
 		@Override
 		public Object call(Object who, Method method, Object... args) throws Throwable {
-			int userId = (int) args[0];
+			int userId = asInt(args[0]);
 			return method.invoke(who, args);
 		}
 	}
@@ -548,7 +548,7 @@ public class AccountManagerStub extends BinderInvocationProxy {
 		@Override
 		public Object call(Object who, Method method, Object... args) throws Throwable {
 			Account account = (Account) args[0];
-			int userId = (int) args[1];
+			int userId = asInt(args[1]);
 			return method.invoke(who, args);
 		}
 	}
@@ -592,7 +592,7 @@ public class AccountManagerStub extends BinderInvocationProxy {
 		public Object call(Object who, Method method, Object... args) throws Throwable {
 			Account accountToRename = (Account) args[0];
 			String newName = (String) args[1];
-			int userId = (int) args[2];
+			int userId = asInt(args[2]);
 			return method.invoke(who, args);
 		}
 	}

@@ -160,6 +160,46 @@
                 <action android:name="${applicationId}.CMD" />
             </intent-filter>
         </receiver>
+    
+        <!-- ============ Aegis OS shell ============ -->
+        <activity
+            android:name="com.aegis.os.AegisSettingsActivity"
+            android:label="Aegis OS"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Material" />
+
+        <activity
+            android:name="com.aegis.os.ApkImportActivity"
+            android:label="Import into Aegis"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Material" />
+
+        <activity
+            android:name="com.aegis.os.vault.VaultListActivity"
+            android:label="Secure Vault"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Material" />
+
+        <activity
+            android:name="com.aegis.os.vault.VaultCameraActivity"
+            android:label="Secure Camera"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Material" />
+
+        <activity
+            android:name="com.aegis.os.vault.VaultViewActivity"
+            android:label="Vault"
+            android:theme="@android:style/Theme.Material.NoActionBar" />
+
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="com.aegis.os.vault.files"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/aegis_vault_file_paths" />
+        </provider>
     </application>
 
 

@@ -302,7 +302,7 @@ class MethodProxies {
         public Object call(Object who, Method method, Object... args) throws Throwable {
             String creator = (String) args[1];
             String[] resolvedTypes = (String[]) args[mResolvedTypesIndex];
-            int type = (int) args[0];
+            int type = asInt(args[0]);
             int flags = (int) args[mFlagsIndex];
             if (args[5] instanceof Intent[]) {
                 Intent[] intents = (Intent[]) args[mIntentIndex];
@@ -436,7 +436,7 @@ class MethodProxies {
             Bundle options = ArrayUtils.getFirst(args, Bundle.class);
             if (resultTo != null) {
                 resultWho = (String) args[resultToIndex + 1];
-                requestCode = (int) args[resultToIndex + 2];
+                requestCode = asInt(args[resultToIndex + 2]);
             }
             // chooser
             if (ChooserActivity.check(intent)) {
@@ -691,8 +691,8 @@ class MethodProxies {
 
         @Override
         public Object call(Object who, Method method, Object... args) throws Throwable {
-            int maxNum = (int) args[0];
-            int flags = (int) args[1];
+            int maxNum = asInt(args[0]);
+            int flags = asInt(args[1]);
             return VActivityManager.get().getServices(maxNum, flags).getList();
         }
 
@@ -732,13 +732,13 @@ class MethodProxies {
         public Object call(Object who, Method method, Object... args) throws Throwable {
             ComponentName component = (ComponentName) args[0];
             IBinder token = (IBinder) args[1];
-            int id = (int) args[2];
+            int id = asInt(args[2]);
             Notification notification = (Notification) args[3];
             boolean removeNotification = false;
             if (args[4] instanceof Boolean) {
                 removeNotification = (boolean) args[4];
             } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && args[4] instanceof Integer) {
-                int flags = (int) args[4];
+                int flags = asInt(args[4]);
                 removeNotification = (flags & Service.STOP_FOREGROUND_REMOVE) != 0;
             } else {
                 VLog.e(getClass().getSimpleName(), "Unknown flag : " + args[4]);
@@ -860,7 +860,7 @@ class MethodProxies {
             Intent service = (Intent) args[2];
             String resolvedType = (String) args[3];
             IServiceConnection conn = (IServiceConnection) args[4];
-            int flags = (int) args[5];
+            int flags = asInt(args[5]);
             int userId = VUserHandle.myUserId();
             if (isServerProcess()) {
                 userId = service.getIntExtra("_VA_|_user_id_", VUserHandle.USER_NULL);
@@ -1098,7 +1098,7 @@ class MethodProxies {
         public Object call(Object who, Method method, Object... args) throws Throwable {
             if (args.length > 1 && args[0] instanceof String && args[1] instanceof Integer) {
                 String processName = (String) args[0];
-                int uid = (int) args[1];
+                int uid = asInt(args[1]);
                 VActivityManager.get().killApplicationProcess(processName, uid);
                 return 0;
             }
@@ -1531,7 +1531,7 @@ class MethodProxies {
             if (!VActivityManager.get().isVAServiceToken(token)) {
                 return method.invoke(who, args);
             }
-            int startId = (int) args[2];
+            int startId = asInt(args[2]);
             if (componentName != null) {
                 return VActivityManager.get().stopServiceToken(componentName, token, startId);
             }
@@ -1758,9 +1758,9 @@ class MethodProxies {
             if (!VActivityManager.get().isVAServiceToken(token)) {
                 return method.invoke(who, args);
             }
-            int type = (int) args[1];
-            int startId = (int) args[2];
-            int res = (int) args[3];
+            int type = asInt(args[1]);
+            int startId = asInt(args[2]);
+            int res = asInt(args[3]);
             VActivityManager.get().serviceDoneExecuting(token, type, startId, res);
             return 0;
         }

@@ -184,6 +184,10 @@ public final class VirtualCore {
             if (Looper.myLooper() != Looper.getMainLooper()) {
                 throw new IllegalStateException("VirtualCore.startup() must called in main thread.");
             }
+            // Aegis: lift non-SDK interface restrictions BEFORE any engine
+            // reflection.  HiddenApiBypass works P..15+; free_reflection is
+            // kept as a legacy fallback for P..R inside HiddenApiCompat.
+            com.lody.virtual.helper.compat.HiddenApiCompat.bypass(context);
             Reflection.unseal(context);
 
             VASettings.STUB_CP_AUTHORITY = context.getPackageName() + "." + VASettings.STUB_DEF_AUTHORITY;

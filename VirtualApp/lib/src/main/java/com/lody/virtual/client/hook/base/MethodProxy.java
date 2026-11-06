@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import com.lody.virtual.client.VClientImpl;
 import com.lody.virtual.client.core.VirtualCore;
 import com.lody.virtual.client.ipc.VirtualLocationManager;
+import com.lody.virtual.helper.compat.BuildCompat;
 import com.lody.virtual.helper.utils.ComponentUtils;
 import com.lody.virtual.os.VUserHandle;
 import com.lody.virtual.remote.VDeviceInfo;
@@ -83,6 +84,48 @@ public abstract class MethodProxy {
     }
 
     public abstract String getMethodName();
+
+    // ---------------------------------------------------------------------
+    // Aegis: numeric argument hardening.
+    //
+    // Android 13 (T) migrated several binder interfaces (PackageManager
+    // GET_* flags, getPackageUid, ...) from int to long.  The device's own
+    // framework classes then hand our InvocationHandler boxed Longs where
+    // this engine (compiled against SDK 28) expects Integers.  Unboxing a
+    // Long via `(int) args[n]` throws ClassCastException.  Every MethodProxy
+    // must parse positional args through these helpers instead of raw casts.
+    // ---------------------------------------------------------------------
+    protected static int asInt(Object o) {
+        if (o instanceof Number) {
+            return ((Number) o).intValue();
+        }
+        if (o == null) {
+            return 0;
+        }
+        try {
+            return Integer.parseInt(o.toString());
+        } catch (NumberFormatException e) {
+            return 0;
+        }
+    }
+
+    protected static long asLong(Object o) {
+        if (o instanceof Number) {
+            return ((Number) o).longValue();
+        }
+        if (o == null) {
+            return 0L;
+        }
+        try {
+            return Long.parseLong(o.toString());
+        } catch (NumberFormatException e) {
+            return 0L;
+        }
+    }
+
+    protected static boolean isTPlus() {
+        return BuildCompat.isT();
+    }
 
     public boolean beforeCall(Object who, Method method, Object... args) {
         return true;

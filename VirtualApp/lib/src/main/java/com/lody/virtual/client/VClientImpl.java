@@ -349,8 +349,25 @@ public final class VClientImpl extends IVClient.Stub {
 
         ClassLoader cl = LoadedApk.getClassLoader.call(data.info);
         if (BuildCompat.isS()) {
+            // S+: framework classes that used to be on the boot classpath
+            // (android.test.base et al.) live in a separate jar that guests
+            // may reference (JUnit, mockable classes).  A DelegateLastClassLoader
+            // lets the guest resolve them after the app classpath.  The jar is
+            // optional on some T/U/V builds -- fall back to the plain parent
+            // when it is missing instead of crashing the bind.
             ClassLoader parent = cl.getParent();
-            Reflect.on(cl).set("parent", new DelegateLastClassLoader("/system/framework/android.test.base.jar", parent));
+            File testBase = new File("/system/framework/android.test.base.jar");
+            if (testBase.exists()) {
+                try {
+                    Reflect.on(cl).set("parent",
+                            new DelegateLastClassLoader("/system/framework/android.test.base.jar", parent));
+                } catch (Throwable t) {
+                    VLog.w(TAG, "DelegateLastClassLoader setup failed: %s", t.getMessage());
+                }
+            } else {
+                VLog.w(TAG, "android.test.base.jar absent on SDK %d, skipping delegate-last setup.",
+                        Build.VERSION.SDK_INT);
+            }
         }
 
         if (Build.VERSION.SDK_INT >= 30)

@@ -131,7 +131,7 @@ public class JobServiceStub extends BinderInvocationProxy {
 
 		@Override
 		public Object call(Object who, Method method, Object... args) throws Throwable {
-			int jobId = (int) args[0];
+			int jobId = asInt(args[0]);
 			VJobScheduler.get().cancel(jobId);
 			return 0;
 		}

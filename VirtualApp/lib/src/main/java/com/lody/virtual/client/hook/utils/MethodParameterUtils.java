@@ -14,78 +14,97 @@ import java.util.HashSet;
  */
 public class MethodParameterUtils {
 
-	public static <T> T getFirstParam(Object[] args, Class<T> tClass) {
-		if (args == null) {
-			return null;
-		}
-		int index = ArrayUtils.indexOfFirst(args, tClass);
-		if (index != -1) {
-			return (T) args[index];
-		}
-		return null;
-	}
+        public static <T> T getFirstParam(Object[] args, Class<T> tClass) {
+                if (args == null) {
+                        return null;
+                }
+                int index = ArrayUtils.indexOfFirst(args, tClass);
+                if (index != -1) {
+                        return (T) args[index];
+                }
+                return null;
+        }
 
-	public static String replaceFirstAppPkg(Object[] args) {
-		if (args == null) {
-			return null;
-		}
-		int index = ArrayUtils.indexOfFirst(args, String.class);
-		if (index != -1) {
-			String pkg = (String) args[index];
-			args[index] = VirtualCore.get().getHostPkg();
-			return pkg;
-		}
-		return null;
-	}
+        public static String replaceFirstAppPkg(Object[] args) {
+                if (args == null) {
+                        return null;
+                }
+                int index = ArrayUtils.indexOfFirst(args, String.class);
+                if (index != -1) {
+                        String pkg = (String) args[index];
+                        args[index] = VirtualCore.get().getHostPkg();
+                        return pkg;
+                }
+                return null;
+        }
 
-	public static String replaceLastAppPkg(Object[] args) {
-		int index = ArrayUtils.indexOfLast(args, String.class);
-		if (index != -1) {
-			String pkg = (String) args[index];
-			args[index] = VirtualCore.get().getHostPkg();
-			return pkg;
-		}
-		return null;
-	}
+        public static String replaceLastAppPkg(Object[] args) {
+                int index = ArrayUtils.indexOfLast(args, String.class);
+                if (index != -1) {
+                        String pkg = (String) args[index];
+                        args[index] = VirtualCore.get().getHostPkg();
+                        return pkg;
+                }
+                return null;
+        }
 
-	public static void replaceLastUid(Object[] args) {
-		int index = ArrayUtils.indexOfLast(args, Integer.class);
-		if (index != -1) {
-			int uid = (int) args[index];
-			if (uid == Process.myUid()) {
-				args[index] = VirtualCore.get().myUid();
-			}
-		}
-	}
+        public static void replaceLastUid(Object[] args) {
+                int index = ArrayUtils.indexOfLast(args, Integer.class);
+                if (index == -1) {
+                        // T+ frameworks may box widened uid-ish args as Long; find the last
+                        // integral value regardless of its exact box type.
+                        index = ArrayUtils.indexOfLast(args, Long.class);
+                }
+                if (index != -1) {
+                        int uid = asInt(args[index]);
+                        if (uid == Process.myUid()) {
+                                args[index] = VirtualCore.get().myUid();
+                        }
+                }
+        }
 
-	public static String replaceSequenceAppPkg(Object[] args, int sequence) {
-		int index = ArrayUtils.indexOf(args, String.class, sequence);
-		if (index != -1) {
-			String pkg = (String) args[index];
-			args[index] = VirtualCore.get().getHostPkg();
-			return pkg;
-		}
-		return null;
-	}
+        private static int asInt(Object o) {
+                if (o instanceof Number) {
+                        return ((Number) o).intValue();
+                }
+                if (o == null) {
+                        return 0;
+                }
+                try {
+                        return Integer.parseInt(o.toString());
+                } catch (NumberFormatException e) {
+                        return 0;
+                }
+        }
 
-	public static Class<?>[] getAllInterface(Class clazz){
-		HashSet<Class<?>> classes = new HashSet<>();
-		getAllInterfaces(clazz,classes);
-		Class<?>[] result=new Class[classes.size()];
-		classes.toArray(result);
-		return result;
-	}
+        public static String replaceSequenceAppPkg(Object[] args, int sequence) {
+                int index = ArrayUtils.indexOf(args, String.class, sequence);
+                if (index != -1) {
+                        String pkg = (String) args[index];
+                        args[index] = VirtualCore.get().getHostPkg();
+                        return pkg;
+                }
+                return null;
+        }
+
+        public static Class<?>[] getAllInterface(Class clazz){
+                HashSet<Class<?>> classes = new HashSet<>();
+                getAllInterfaces(clazz,classes);
+                Class<?>[] result=new Class[classes.size()];
+                classes.toArray(result);
+                return result;
+        }
 
 
-	public static void getAllInterfaces(Class clazz, HashSet<Class<?>> interfaceCollection) {
-		Class<?>[] classes = clazz.getInterfaces();
-		if (classes.length != 0) {
-			interfaceCollection.addAll(Arrays.asList(classes));
-		}
-		if (clazz.getSuperclass() != Object.class) {
-			getAllInterfaces(clazz.getSuperclass(), interfaceCollection);
-		}
-	}
+        public static void getAllInterfaces(Class clazz, HashSet<Class<?>> interfaceCollection) {
+                Class<?>[] classes = clazz.getInterfaces();
+                if (classes.length != 0) {
+                        interfaceCollection.addAll(Arrays.asList(classes));
+                }
+                if (clazz.getSuperclass() != Object.class) {
+                        getAllInterfaces(clazz.getSuperclass(), interfaceCollection);
+                }
+        }
 
 
 }

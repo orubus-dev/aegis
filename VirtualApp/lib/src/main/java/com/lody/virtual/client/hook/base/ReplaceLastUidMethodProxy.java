@@ -16,7 +16,7 @@ public class ReplaceLastUidMethodProxy extends StaticMethodProxy {
     public boolean beforeCall(Object who, Method method, Object... args) {
         int index = ArrayUtils.indexOfLast(args, Integer.class);
         if (index != -1) {
-            int uid = (int) args[index];
+            int uid = asInt(args[index]);
             if (uid == Process.myUid()) {
                 args[index] = getRealUid();
             }
