@@ -3,9 +3,10 @@
 buildscript {
     repositories {
         google()
+        maven { url 'https://maven.aliyun.com/repository/jcenter' } // jcenter archive (me.weishu.*)
+        maven { url 'https://maven.aliyun.com/repository/public' }
         mavenCentral()
         maven { url 'https://jitpack.io' }
-        jcenter() // read-only legacy mirror; still serves me.weishu.* engine deps
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:7.4.2'
@@ -16,10 +17,11 @@ buildscript {
 allprojects {
     repositories {
         google()
+        maven { url 'https://maven.aliyun.com/repository/jcenter' }
+        maven { url 'https://maven.aliyun.com/repository/public' }
         mavenCentral()
         maven { url 'https://maven.google.com/' }
         maven { url 'https://jitpack.io' }
-        jcenter() // read-only legacy mirror
     }
 }
 
