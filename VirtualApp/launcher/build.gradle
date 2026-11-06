@@ -4,7 +4,9 @@ apply plugin: 'com.android.library'
 apply plugin: 'com.google.protobuf'
 
 android {
-    compileSdkVersion 28
+    // 27 on purpose: Canvas.*_SAVE_FLAG constants still exist here; they were
+    // removed from API 28 stubs and the AOSP drawing code depends on them.
+    compileSdkVersion 27
 
     defaultConfig {
         // No minSdk was declared upstream -> AGP defaulted to 1 and tried to

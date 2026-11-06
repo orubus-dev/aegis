@@ -26,7 +26,7 @@ public class CustomAppFilter extends NexusAppFilter {
 
     @Override
     public boolean shouldShowApp(ComponentName componentName, UserHandle user) {
-        if (componentName.getPackageName().equals(BuildConfig.APPLICATION_ID)) {
+        if (componentName.getPackageName().equals(mContext.getPackageName())) {
             return false;
         }
         if (CustomIconUtils.usingValidPack(mContext)) {
