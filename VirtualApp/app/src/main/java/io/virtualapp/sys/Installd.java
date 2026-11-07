@@ -180,7 +180,11 @@ public class Installd {
     }
 
     public static InstallResult addVirtualApp(AppInfoLite info) {
-        int flags = InstallStrategy.COMPARE_VERSION | InstallStrategy.SKIP_DEX_OPT;
+        // Aegis: UPDATE_IF_EXIST lets an explicit re-clone reinstall/refresh an
+        // already-registered package instead of failing with "version downrange"
+        // (the ghost-entry trap that left apps invisible in the drawer).
+        int flags = InstallStrategy.COMPARE_VERSION | InstallStrategy.SKIP_DEX_OPT
+                | InstallStrategy.UPDATE_IF_EXIST;
         info.fastOpen = false; // disable fast open for compile.
         if (DeviceUtil.isMeizuBelowN()) {
             info.fastOpen = true;

@@ -139,6 +139,12 @@ public final class VaultAutoImport {
                     "autoimport_" + VaultCrypto.newId());
             copy(source, tmp);
 
+            // Aegis: scrub identifying metadata (GPS, device model, ...) from
+            // imported JPEGs before they are sealed into the vault.
+            if (AegisScrubber.isJpeg(tmp)) {
+                AegisScrubber.scrubImage(tmp);
+            }
+
             File target = new File(VaultStore.vaultDir(ctx),
                     "guest_" + VaultCrypto.newId());
             String name = source.getName();

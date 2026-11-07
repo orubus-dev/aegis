@@ -89,9 +89,14 @@ public class ApkImportActivity extends Activity {
                 Diagnostics.log(this, "import: copied " + tmp.length() + " bytes to " + tmp.getName());
                 runOnUiThread(() -> mStatus.setText(R.string.apk_import_installing));
                 final File apk = tmp;
+                // Aegis: UPDATE_IF_EXIST -- importing the same (or even older)
+                // version of an installed package reinstalls it instead of
+                // failing with "version downrange" (user explicitly picked
+                // this APK; that intent wins inside the sandbox).
                 com.lody.virtual.remote.InstallResult res =
                         VirtualCore.get().installPackage(apk.getAbsolutePath(),
-                                InstallStrategy.COMPARE_VERSION | InstallStrategy.SKIP_DEX_OPT);
+                                InstallStrategy.COMPARE_VERSION | InstallStrategy.SKIP_DEX_OPT
+                                        | InstallStrategy.UPDATE_IF_EXIST);
                 final boolean ok = res != null && res.isSuccess;
                 final String errMsg = res == null ? "null result" : res.error;
                 Diagnostics.log(this, "import: success=" + ok

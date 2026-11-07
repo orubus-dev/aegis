@@ -281,6 +281,162 @@ public final class ModernPackageParser {
         return cache;
     }
 
+    /**
+     * Aegis: heal a VPackage loaded from the parcel cache.  Caches written by
+     * builds before intent-filter normalization existed stored activities
+     * with EMPTY intent lists (every filter lookup missed), which made the
+     * package invisible in the drawer (nothing launchable) while still
+     * blocking reinstall with "version downrange".  This re-walks the
+     * manifest of the installed base APK and re-attaches the filters.
+     *
+     * @return {@link #REPAIR_OK_LAUNCHABLE}, {@link #REPAIR_NO_LAUNCHER}
+     * (manifest genuinely declares no launcher activity -- fine for
+     * plugins/services), or {@link #REPAIR_FAILED} (manifest declares a
+     * launcher we could not attach, or the APK is unreadable -> corrupt).
+     */
+    public static final int REPAIR_OK_LAUNCHABLE = 1;
+    public static final int REPAIR_NO_LAUNCHER = 0;
+    public static final int REPAIR_FAILED = -1;
+
+    public static int repairIntentFilters(VPackage pkg, File baseApk) {
+        if (pkg == null || pkg.packageName == null) {
+            return REPAIR_FAILED;
+        }
+        if (baseApk == null || !baseApk.isFile()) {
+            VLog.w(TAG, "repair: base apk missing for " + pkg.packageName);
+            return REPAIR_FAILED;
+        }
+        boolean attachedLauncher = false;
+        int attached = 0;
+        try {
+            Map<String, List<IntentFilter>> filters = new HashMap<>();
+            Map<String, String> aliases = new HashMap<>();
+            collectIntentFilters(baseApk, filters, aliases);
+
+            if (pkg.activities != null) {
+                for (VPackage.ActivityComponent ac : pkg.activities) {
+                    if (ac == null || ac.info == null || ac.info.name == null) {
+                        continue;
+                    }
+                    List<IntentFilter> list = filters.get(normalizeClassName(pkg.packageName, ac.info.name));
+                    if (list != null && !list.isEmpty()) {
+                        ac.intents = buildIntentInfos(list);
+                        attached += ac.intents.size();
+                        for (IntentFilter f : list) {
+                            if (f.hasAction(android.content.Intent.ACTION_MAIN)
+                                    && f.hasCategory(android.content.Intent.CATEGORY_LAUNCHER)) {
+                                attachedLauncher = true;
+                            }
+                        }
+                    }
+                }
+            }
+            if (pkg.receivers != null) {
+                for (VPackage.ActivityComponent rc : pkg.receivers) {
+                    if (rc == null || rc.info == null || rc.info.name == null) {
+                        continue;
+                    }
+                    List<IntentFilter> list = filters.get(normalizeClassName(pkg.packageName, rc.info.name));
+                    if (list != null && !list.isEmpty()) {
+                        rc.intents = buildIntentInfos(list);
+                        attached += rc.intents.size();
+                    }
+                }
+            }
+            if (pkg.services != null) {
+                for (VPackage.ServiceComponent sc : pkg.services) {
+                    if (sc == null || sc.info == null || sc.info.name == null) {
+                        continue;
+                    }
+                    List<IntentFilter> list = filters.get(normalizeClassName(pkg.packageName, sc.info.name));
+                    if (list != null && !list.isEmpty()) {
+                        sc.intents = buildServiceIntentInfos(list);
+                        attached += sc.intents.size();
+                    }
+                }
+            }
+            if (pkg.providers != null) {
+                for (VPackage.ProviderComponent pc : pkg.providers) {
+                    if (pc == null || pc.info == null || pc.info.name == null) {
+                        continue;
+                    }
+                    List<IntentFilter> list = filters.get(normalizeClassName(pkg.packageName, pc.info.name));
+                    if (list != null && !list.isEmpty()) {
+                        pc.intents = buildProviderIntentInfos(list);
+                        attached += pc.intents.size();
+                    }
+                }
+            }
+        } catch (Throwable t) {
+            VLog.w(TAG, "repair walk failed for " + pkg.packageName + ": " + t);
+            return REPAIR_FAILED;
+        }
+        VLog.i(TAG, "repair: " + pkg.packageName + " attached " + attached
+                + " filters (launcher=" + attachedLauncher + ")");
+        if (attachedLauncher) {
+            return REPAIR_OK_LAUNCHABLE;
+        }
+        // No launcher filter attached. Healthy only when the manifest itself
+        // declares no MAIN/LAUNCHER activity; otherwise the cache is corrupt.
+        return manifestDeclaresLauncher(baseApk) ? REPAIR_FAILED : REPAIR_NO_LAUNCHER;
+    }
+
+    /**
+     * true only when the manifest actually declares an activity with a
+     * MAIN action + LAUNCHER category.  Unreadable manifests return false
+     * (we cannot prove corruption from a read failure alone).
+     */
+    private static boolean manifestDeclaresLauncher(File baseApk) {
+        AssetManager assets = null;
+        XmlResourceParser parser = null;
+        try {
+            assets = newAssetManager(baseApk.getAbsolutePath());
+            if (assets == null) {
+                return false;
+            }
+            parser = assets.openXmlResourceParser(MANIFEST_FILE);
+            int event;
+            boolean inActivity = false;
+            boolean sawMain = false;
+            while ((event = parser.next()) != XmlPullParser.END_DOCUMENT) {
+                if (event == XmlPullParser.START_TAG) {
+                    String name = parser.getName();
+                    if (TAG_ACTIVITY.equals(name)) {
+                        inActivity = true;
+                        sawMain = false;
+                    } else if (TAG_ACTION.equals(name) && inActivity) {
+                        if (android.content.Intent.ACTION_MAIN.equals(attr(parser, "name"))) {
+                            sawMain = true;
+                        }
+                    } else if (TAG_CATEGORY.equals(name) && inActivity) {
+                        if (sawMain && android.content.Intent.CATEGORY_LAUNCHER.equals(attr(parser, "name"))) {
+                            return true;
+                        }
+                    }
+                } else if (event == XmlPullParser.END_TAG && TAG_ACTIVITY.equals(parser.getName())) {
+                    inActivity = false;
+                    sawMain = false;
+                }
+            }
+            return false;
+        } catch (Throwable t) {
+            return false;
+        } finally {
+            if (parser != null) {
+                try {
+                    parser.close();
+                } catch (Throwable ignored) {
+                }
+            }
+            if (assets != null) {
+                try {
+                    assets.close();
+                } catch (Throwable ignored) {
+                }
+            }
+        }
+    }
+
     private static VPackage.ActivityComponent buildActivity(ActivityInfo info, String className,
                                                             Bundle metaData, List<IntentFilter> filterList) {
         VPackage.ActivityComponent ac = new VPackage.ActivityComponent();

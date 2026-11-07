@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="6dp">
+
+    <LinearLayout
+        android:id="@+id/bubble_box"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#FF1C242E"
+        android:orientation="vertical"
+        android:padding="10dp">
+
+        <TextView
+            android:id="@+id/bubble_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxWidth="260dp"
+            android:textColor="#FFE8ECF1"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/bubble_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:textColor="#FF7A8494"
+            android:textSize="10sp" />
+    </LinearLayout>
+</LinearLayout>

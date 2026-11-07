@@ -257,4 +257,68 @@ Currently, EXposed has been put on the app store and renamed to Tai Chi. You can
     <string name="vault_exported">Exported (decrypted)</string>
     <string name="about_github_title">Fork Aegis on GitHub</string>
     <string name="about_issues_title">Report an issue on GitHub</string>
+
+    <!-- ============ Aegis OS: simulated permissions ============ -->
+    <string name="aegis_perm_title">Permissions</string>
+    <string name="aegis_perm_subtitle">Aegis simulates Android\'s permission system: every app inside the sandbox has its own grant state, independent of this phone.</string>
+    <string name="aegis_perm_sim_enabled">Permission simulation: ON (tap to switch off)</string>
+    <string name="aegis_perm_sim_disabled">Permission simulation: OFF (guests inherit this phone\'s grants)</string>
+    <string name="aegis_perm_sim_on">Permission simulation enabled \u2014 apps inside Aegis now get their own permissions</string>
+    <string name="aegis_perm_sim_off">Permission simulation disabled \u2014 guests now mirror the phone\'s grants</string>
+    <string name="aegis_perm_apps_header">Apps inside Aegis</string>
+    <string name="aegis_perm_sheet_title">App permissions</string>
+    <string name="aegis_perm_sheet_hint">Tap a permission to flip Granted / Denied. Long-press to reset to the Aegis default. Permissions the app never requested are always denied.</string>
+    <string name="aegis_perm_state_default">default</string>
+    <string name="aegis_perm_state_granted">GRANTED</string>
+    <string name="aegis_perm_state_denied">DENIED</string>
+    <string name="aegis_perm_set_granted">Granted inside Aegis</string>
+    <string name="aegis_perm_set_denied">Denied inside Aegis</string>
+    <string name="aegis_perm_reset">Reset to default</string>
+
+    <!-- ============ Aegis OS: built-in identity apps ============ -->
+    <string name="aegis_contacts_title">Contacts</string>
+    <string name="aegis_contacts_subtitle">The sandbox\'s own address book \u2014 generated for you, stored on this device only, never synced.</string>
+    <string name="aegis_contacts_add">Add contact</string>
+    <string name="aegis_contacts_edit">Edit contact</string>
+    <string name="aegis_contacts_name">Name</string>
+    <string name="aegis_contacts_phone">Phone</string>
+    <string name="aegis_contacts_email">Email (optional)</string>
+    <string name="aegis_contacts_org">Organization (optional)</string>
+    <string name="aegis_contacts_need_name_phone">Name and phone are required</string>
+    <string name="aegis_contacts_delete_confirm">Delete this contact from the sandbox?</string>
+    <string name="aegis_delete">Delete</string>
+    <string name="aegis_save">Save</string>
+    <string name="aegis_cancel">Cancel</string>
+    <string name="aegis_close">Close</string>
+
+    <string name="aegis_msg_title">Messages</string>
+    <string name="aegis_msg_subtitle">Simulated conversations that live inside Aegis. Nothing here is ever transmitted \u2014 no SIM, no network.</string>
+    <string name="aegis_msg_new">New conversation</string>
+    <string name="aegis_msg_hint">Write a message\u2026</string>
+    <string name="aegis_msg_send">Send</string>
+    <string name="aegis_thread_local_only">%1$s \u2022 on this device only \u2014 nothing is sent</string>
+
+    <string name="aegis_phone_title">Phone</string>
+    <string name="aegis_phone_subtitle">A working dialpad for the simulated handset. Calls are recorded in the sandbox\'s own call log \u2014 nothing is dialed.</string>
+    <string name="aegis_phone_enter_number">Enter number</string>
+    <string name="aegis_phone_call">Call</string>
+    <string name="aegis_phone_backspace">\u232b</string>
+    <string name="aegis_phone_sim_notice">Simulated call \u2014 nothing will be dialed. Add it to the sandbox\'s call log?</string>
+    <string name="aegis_phone_log_header">Recent calls</string>
+    <string name="aegis_phone_outgoing">Outgoing \u2022 simulated</string>
+    <string name="aegis_phone_incoming">Incoming \u2022 simulated</string>
+
+    <string name="aegis_row_permissions">Permissions</string>
+    <string name="aegis_row_contacts">Contacts</string>
+    <string name="aegis_row_messages">Messages</string>
+    <string name="aegis_row_phone">Phone</string>
+
+    <!-- ============ Aegis OS: secure camera ============ -->
+    <string name="aegis_camera_hint">Photos are scrubbed of GPS and device metadata, then encrypted into the vault. Nothing reaches your normal gallery.</string>
+    <string name="aegis_camera_shutter">CAPTURE</string>
+    <string name="aegis_camera_use_system">System app</string>
+    <string name="aegis_camera_saved">Scrubbed \u0026 encrypted into vault</string>
+    <string name="aegis_camera_failed">Capture failed</string>
+    <string name="aegis_camera_unavailable">Camera preview unavailable \u2014 use the system app below</string>
+    <string name="aegis_camera_perm_needed">Camera permission is needed for the in-app camera. You can still use the system camera app.</string>
 </resources>

@@ -239,6 +239,16 @@ public class VPackageManagerService extends IPackageManager.Stub {
                 || "android.permission.INTERACT_ACROSS_USERS_FULL".equals(permName)) {
             return PackageManager.PERMISSION_DENIED;
         }
+        // Aegis simulated permissions: every guest gets its own grant state
+        // (see AegisPermissionStore).  With simulation off we keep the legacy
+        // behavior of mirroring the host's own grants.
+        if (AegisPermissionStore.isSimulationEnabled()) {
+            int verdict = AegisPermissionStore.checkPermission(permName, pkgName, userId);
+            if (verdict != AegisPermissionStore.VERDICT_UNSET) {
+                return verdict;
+            }
+            return PackageManager.PERMISSION_GRANTED;
+        }
         return VirtualCore.get().getPackageManager().checkPermission(permName, VirtualCore.get().getHostPkg());
     }
 

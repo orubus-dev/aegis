@@ -116,6 +116,60 @@ scan-on-open), guest notification routing into Aegis-owned channels,
 AppOps op-code remap audit, per-SDK `bindApplication`/mirror variance
 checks, Android 16 (W) pass.
 
+## Status: v1.1.0 — install self-healing + simulated permissions + identity apps
+
+**Second field round fixed (v1.0.0 device logs → this build):**
+- **"Installs but never shows in the drawer" + "Can not update the package
+  (such as version downrange)" — both one bug family, fixed at the root.**
+  Caches written by older builds stored activities with EMPTY intent-filter
+  lists (the pre-normalization parser bug), so such a package was invisible
+  in the launcher (nothing launchable) while still blocking every reinstall.
+  The engine now *repairs at load*: on boot it re-walks each package's
+  manifest and re-attaches the missing filters; entries whose manifest
+  declares a launcher that cannot be attached are purged automatically so
+  the next clone is a clean install.
+- Clone and APK-import now pass `UPDATE_IF_EXIST`: re-cloning or re-importing
+  an installed package reinstalls/updates it in place instead of failing.
+  Downgrade installs are allowed inside the sandbox (explicit user action).
+- Install-failure results carry the package name again (diagnostics logged
+  `pkg=null`) and state the installed vs new versionCode.
+- `isPackageLaunchable` no longer crashes the drawer when a package has no
+  user state (empty `getInstalledUsers()`).
+
+**M2 — simulated permissions (OS-in-OS):**
+- Full simulated permission system: every guest app has its own grant state
+  inside the sandbox, independent of the phone. `checkPermission` from any
+  guest resolves through the Aegis grant store (JSON, engine-private):
+  requested → granted by default, never-requested → denied (real Android
+  behavior), explicit overrides from the UI always win.
+- **Permissions tab** (Aegis OS → Permissions): master simulation switch +
+  one sheet per guest app listing every requested permission with group,
+  sensitive flag and Granted/Denied state; tap to flip, long-press to reset.
+- Off-switch restores the legacy behavior (guests mirror the host's grants).
+
+**M2b — simulated identity:**
+- On first use Aegis generates a device profile (name, +234-flavored phone,
+  email, model, Android ID, Luhn-valid IMEI), 24 contacts and 7 message
+  threads — all stored in the host's private storage, never synced.
+
+**M3 — secure camera + metadata scrubbing:**
+- **In-app camera** (camera1 preview, no external camera app involved):
+  capture → strip all identifying EXIF (GPS block, make/model/serials,
+  timestamps, comments, thumbnails refs) → encrypt into the vault → shred
+  the plaintext temp. Nothing reaches the phone's gallery.
+- System-camera fallback kept for photo/video; **vault auto-import now also
+  scrubs JPEG metadata** before sealing guest media into the vault.
+
+**M4 — built-in Aegis apps:**
+- **Contacts** (generated, fully editable), **Messages** (threads +
+  composer, on-device only — nothing is transmitted), **Phone** (dialpad +
+  sandbox call log, simulated calls only — nothing is dialed). All honest
+  about being local-only, right in their subtitles.
+
+**Still honest:** this compiles and the signed-release path is verified by
+CI; the behavioral fixes above are *not yet verified on a real device* —
+that is what this test round is for.
+
 ## Build
 
 ```bash

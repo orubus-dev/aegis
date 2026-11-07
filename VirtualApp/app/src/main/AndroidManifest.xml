@@ -5,6 +5,8 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+    <!-- Aegis secure camera (in-app preview + capture; photos never leave Aegis) -->
+    <uses-permission android:name="android.permission.CAMERA" />
 
     <uses-sdk tools:overrideLibrary="com.android.launcher3,android.support.dynamicanimation" />
 
@@ -196,6 +198,50 @@
             android:name="com.aegis.os.vault.VaultViewActivity"
             android:label="Vault"
             android:theme="@android:style/Theme.Material.NoActionBar" />
+
+        <!-- ============ Aegis OS: simulated permissions ============ -->
+        <activity
+            android:name="com.aegis.os.permission.AegisPermissionsActivity"
+            android:label="Aegis Permissions"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Material" />
+
+        <activity
+            android:name="com.aegis.os.permission.AegisAppPermissionsActivity"
+            android:label="App permissions"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Material" />
+
+        <!-- ============ Aegis OS: built-in system apps ============ -->
+        <activity
+            android:name="com.aegis.os.vault.AegisCameraActivity"
+            android:label="Aegis Camera"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Material.NoActionBar" />
+
+        <activity
+            android:name="com.aegis.os.apps.AegisContactsActivity"
+            android:label="Aegis Contacts"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Material" />
+
+        <activity
+            android:name="com.aegis.os.apps.AegisMessagesActivity"
+            android:label="Aegis Messages"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Material" />
+
+        <activity
+            android:name="com.aegis.os.apps.AegisThreadActivity"
+            android:label="Conversation"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Material" />
+
+        <activity
+            android:name="com.aegis.os.apps.AegisPhoneActivity"
+            android:label="Aegis Phone"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Material" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"

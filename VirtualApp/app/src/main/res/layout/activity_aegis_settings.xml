@@ -106,6 +106,26 @@
                 android:text="@string/aegis_row_camera" />
 
             <TextView
+                android:id="@+id/aegis_row_contacts"
+                style="@style/AegisSettingsRow"
+                android:text="@string/aegis_row_contacts" />
+
+            <TextView
+                android:id="@+id/aegis_row_messages"
+                style="@style/AegisSettingsRow"
+                android:text="@string/aegis_row_messages" />
+
+            <TextView
+                android:id="@+id/aegis_row_phone"
+                style="@style/AegisSettingsRow"
+                android:text="@string/aegis_row_phone" />
+
+            <TextView
+                android:id="@+id/aegis_row_permissions"
+                style="@style/AegisSettingsRow"
+                android:text="@string/aegis_row_permissions" />
+
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"

@@ -56,7 +56,16 @@ public class AegisSettingsActivity extends Activity {
             });
         }
         row(R.id.aegis_row_camera, R.string.aegis_row_camera, v ->
-                startActivity(new Intent(this, com.aegis.os.vault.VaultCameraActivity.class)));
+                startActivity(new Intent(this, com.aegis.os.vault.AegisCameraActivity.class)));
+        row(R.id.aegis_row_contacts, R.string.aegis_row_contacts, v ->
+                startActivity(new Intent(this, com.aegis.os.apps.AegisContactsActivity.class)));
+        row(R.id.aegis_row_messages, R.string.aegis_row_messages, v ->
+                startActivity(new Intent(this, com.aegis.os.apps.AegisMessagesActivity.class)));
+        row(R.id.aegis_row_phone, R.string.aegis_row_phone, v ->
+                startActivity(new Intent(this, com.aegis.os.apps.AegisPhoneActivity.class)));
+        row(R.id.aegis_row_permissions, R.string.aegis_row_permissions, v ->
+                startActivity(new Intent(this,
+                        com.aegis.os.permission.AegisPermissionsActivity.class)));
         row(R.id.aegis_row_engine, R.string.aegis_row_engine, v ->
                 startActivity(new Intent(this, SettingsActivity.class)));
         row(R.id.aegis_row_diag, R.string.aegis_row_diag, v ->

@@ -24,6 +24,7 @@ import com.lody.virtual.server.am.UidSystem;
 import com.lody.virtual.server.am.VActivityManagerService;
 import com.lody.virtual.server.interfaces.IAppRequestListener;
 import com.lody.virtual.server.interfaces.IPackageObserver;
+import com.lody.virtual.server.pm.parser.ModernPackageParser;
 import com.lody.virtual.server.pm.parser.PackageParserEx;
 import com.lody.virtual.server.pm.parser.VPackage;
 
@@ -111,6 +112,17 @@ public class VAppManagerService extends IAppManager.Stub {
         if (pkg == null || pkg.packageName == null) {
             return false;
         }
+        // Aegis: caches written by older builds can carry components with no
+        // intent filters at all (the pre-normalization parser bug) -- such
+        // packages are invisible in the launcher and block reinstall with
+        // "version downrange".  Re-attach filters from the stored base APK;
+        // purge the entry entirely if it is beyond repair.
+        int repair = ModernPackageParser.repairIntentFilters(pkg, new File(ps.apkPath));
+        if (repair == ModernPackageParser.REPAIR_FAILED) {
+            VLog.w(TAG, "loadPackage: entry for " + ps.packageName
+                    + " is corrupt (no launchable filters, launcher declared) -- purging");
+            return false;
+        }
         chmodPackageDictionary(cacheFile);
         PackageCacheManager.put(pkg, ps);
         BroadcastSystem.get().startApp(pkg);
@@ -176,7 +188,13 @@ public class VAppManagerService extends IAppManager.Stub {
                 return res;
             }
             if (!canUpdate(existOne, pkg, flags)) {
-                return InstallResult.makeFailure("Can not update the package (such as version downrange).");
+                // Aegis: keep the package name on the failure result (the UI
+                // diagnostics used to log pkg=null here) and say WHY.
+                InstallResult fail = InstallResult.makeFailure("Can not update package "
+                        + pkg.packageName + " (installed v" + existOne.mVersionCode
+                        + " < new v" + pkg.mVersionCode + ").");
+                fail.packageName = pkg.packageName;
+                return fail;
             }
             res.isUpdate = true;
         }

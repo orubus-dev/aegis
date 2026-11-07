@@ -458,8 +458,13 @@ public final class VirtualCore {
 
     public boolean isPackageLaunchable(String packageName) {
         InstalledAppInfo info = getInstalledAppInfo(packageName, 0);
-        return info != null
-                && getLaunchIntent(packageName, info.getInstalledUsers()[0]) != null;
+        if (info == null || info.getInstalledUsers() == null
+                || info.getInstalledUsers().length == 0) {
+            // Aegis: a registered package with no user state must not crash
+            // the drawer query (getInstalledUsers()[0] used to throw).
+            return false;
+        }
+        return getLaunchIntent(packageName, info.getInstalledUsers()[0]) != null;
     }
 
     public Intent getLaunchIntent(String packageName, int userId) {

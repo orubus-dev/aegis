@@ -162,7 +162,7 @@ public class VEnvironment {
     public static File getVirtualStorageBaseDir() {
         File externalFilesRoot = Environment.getExternalStorageDirectory();
         if (externalFilesRoot != null) {
-            File vBaseDir = new File(externalFilesRoot, "VirtualXposed");
+            File vBaseDir = new File(externalFilesRoot, "Aegis");
             File vSdcard = new File(vBaseDir, "vsdcard");
             return ensureCreated(vSdcard);
         }

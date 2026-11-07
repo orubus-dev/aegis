@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="8dp">
+
+    <EditText
+        android:id="@+id/thread_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/aegis_contacts_name"
+        android:inputType="textPersonName"
+        android:textColor="#FFE8ECF1"
+        android:textColorHint="#FF5B6675" />
+
+    <EditText
+        android:id="@+id/thread_phone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/aegis_contacts_phone"
+        android:inputType="phone"
+        android:textColor="#FFE8ECF1"
+        android:textColorHint="#FF5B6675" />
+</LinearLayout>

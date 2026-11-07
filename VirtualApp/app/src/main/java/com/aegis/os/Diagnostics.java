@@ -23,11 +23,26 @@ public final class Diagnostics {
     private static final String FILE_NAME = "aegis_diagnostics.log";
     private static final long MAX_BYTES = 96L * 1024; // trim from the head
 
+    /** Remembered application context so engine-side callers (which have no
+     *  Activity) can still log; see log(null, ...). */
+    private static volatile Context sAppContext;
+
     private Diagnostics() {
     }
 
+    private static Context ctx(Context ctx) {
+        if (ctx != null) {
+            if (sAppContext == null) {
+                sAppContext = ctx.getApplicationContext();
+            }
+            return ctx;
+        }
+        return sAppContext;
+    }
+
     private static File file(Context ctx) {
-        return new File(ctx.getFilesDir(), FILE_NAME);
+        Context c = ctx(ctx);
+        return new File(c.getFilesDir(), FILE_NAME);
     }
 
     public static synchronized void log(Context ctx, String message) {
@@ -53,7 +68,7 @@ public final class Diagnostics {
     /** Returns up to {@code maxLines} most recent lines, oldest first. */
     public static synchronized String readLast(Context ctx, int maxLines) {
         File f = file(ctx);
-        if (!f.exists()) {
+        if (f == null || !f.exists()) {
             return "(no diagnostics yet -- try importing or cloning an app)";
         }
         java.util.ArrayDeque<String> deque = new java.util.ArrayDeque<>(maxLines);
@@ -83,7 +98,7 @@ public final class Diagnostics {
 
     public static synchronized void clear(Context ctx) {
         File f = file(ctx);
-        if (f.exists()) {
+        if (f != null && f.exists()) {
             // noinspection ResultOfMethodCallIgnored
             f.delete();
         }
@@ -95,6 +110,9 @@ public final class Diagnostics {
 
     private static void append(Context ctx, String block) {
         File f = file(ctx);
+        if (f == null) {
+            return;
+        }
         try {
             if (f.length() > MAX_BYTES) {
                 trim(f);
