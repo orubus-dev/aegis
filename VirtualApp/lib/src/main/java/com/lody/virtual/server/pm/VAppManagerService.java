@@ -151,13 +151,19 @@ public class VAppManagerService extends IAppManager.Stub {
             return InstallResult.makeFailure("Package File is not exist.");
         }
         VPackage pkg = null;
+        Throwable parseError = null;
         try {
             pkg = PackageParserEx.parsePackage(packageFile);
         } catch (Throwable e) {
-            e.printStackTrace();
+            parseError = e;
+            VLog.e(TAG, "parse failed for " + path + ": " + e);
+            VLog.e(TAG, e);
         }
         if (pkg == null || pkg.packageName == null) {
-            return InstallResult.makeFailure("Unable to parse the package.");
+            // Carry the real parser exception to the installer UI -- testers
+            // only ever saw "Unable to parse the package." before.
+            return InstallResult.makeFailure("Unable to parse the package"
+                    + (parseError != null ? ": " + parseError : "."));
         }
         InstallResult res = new InstallResult();
         res.packageName = pkg.packageName;

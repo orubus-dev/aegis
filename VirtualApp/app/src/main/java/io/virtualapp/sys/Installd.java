@@ -102,11 +102,15 @@ public class Installd {
                 }
 
                 InstallResult res = addVirtualApp(info);
-                if (!res.isSuccess) {
+                com.aegis.os.Diagnostics.log(XApp.getApp(), "clone: pkg=" + info.packageName
+                        + " success=" + (res != null && res.isSuccess)
+                        + " error=" + (res == null ? "null result" : res.error));
+                if (res == null || !res.isSuccess) {
                     if (addResult.appData != null) {
                         // mView.removeAppToLauncher(addResult.appData);
                     }
-                    throw new IllegalStateException(res.error);
+                    throw new IllegalStateException(
+                            res == null ? "install returned no result" : res.error);
                 }
             }
         }).then((res) -> {

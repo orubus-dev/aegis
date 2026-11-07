@@ -71,6 +71,33 @@ public class VaultListActivity extends Activity {
         TextView empty = findViewById(R.id.vault_empty);
         empty.setText(R.string.vault_empty);
         empty.setVisibility(mItems.isEmpty() ? View.VISIBLE : View.GONE);
+
+        // M4: pull any media guests produced into the encrypted vault before
+        // the user looks at the list.
+        autoImportGuestMedia();
+    }
+
+    private void autoImportGuestMedia() {
+        if (!VaultAutoImport.isEnabled(this)) {
+            return;
+        }
+        final android.app.Activity activity = this;
+        new Thread(() -> {
+            try {
+                final int n = VaultAutoImport.importNewGuestMedia(activity);
+                if (n > 0) {
+                    runOnUiThread(() -> {
+                        mItems = VaultStore.list(activity);
+                        mAdapter.notifyDataSetChanged();
+                        findViewById(R.id.vault_empty)
+                                .setVisibility(mItems.isEmpty() ? View.VISIBLE : View.GONE);
+                        Toast.makeText(activity, getResources().getQuantityString(
+                                R.plurals.vault_auto_imported, n, n), Toast.LENGTH_LONG).show();
+                    });
+                }
+            } catch (Throwable ignored) {
+            }
+        }).start();
     }
 
     private void pick() {

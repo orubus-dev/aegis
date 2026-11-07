@@ -68,6 +68,7 @@ public class ApkImportActivity extends Activity {
     private void importApk(Uri uri) {
         mProgress.setVisibility(View.VISIBLE);
         mStatus.setText(R.string.apk_import_copying);
+        Diagnostics.log(this, "import: picking " + uri);
         new Thread(() -> {
             File tmp = null;
             try {
@@ -85,6 +86,7 @@ public class ApkImportActivity extends Activity {
                         out.write(buf, 0, n);
                     }
                 }
+                Diagnostics.log(this, "import: copied " + tmp.length() + " bytes to " + tmp.getName());
                 runOnUiThread(() -> mStatus.setText(R.string.apk_import_installing));
                 final File apk = tmp;
                 com.lody.virtual.remote.InstallResult res =
@@ -92,6 +94,10 @@ public class ApkImportActivity extends Activity {
                                 InstallStrategy.COMPARE_VERSION | InstallStrategy.SKIP_DEX_OPT);
                 final boolean ok = res != null && res.isSuccess;
                 final String errMsg = res == null ? "null result" : res.error;
+                Diagnostics.log(this, "import: success=" + ok
+                        + " update=" + (res != null && res.isUpdate)
+                        + " pkg=" + (res != null ? res.packageName : "?")
+                        + " error=" + errMsg);
                 runOnUiThread(() -> {
                     mProgress.setVisibility(View.GONE);
                     if (ok) {
@@ -104,6 +110,7 @@ public class ApkImportActivity extends Activity {
                 });
             } catch (Throwable e) {
                 VLog.w("ApkImport", "import failed: " + e);
+                Diagnostics.log(this, "import: FAILED with exception", e);
                 runOnUiThread(() -> {
                     mProgress.setVisibility(View.GONE);
                     mStatus.setText(R.string.apk_import_failed_generic);

@@ -310,26 +310,30 @@ public class FakeGms {
         updateMessage(activity, dialog, "installing gms core");
         InstallResult installResult = VirtualCore.get().installPackage(gmsCoreFile.getAbsolutePath(), InstallStrategy.UPDATE_IF_EXIST);
 
-        if (!installResult.isSuccess) {
-            return "install gms core failed: " + installResult.error;
+        if (installResult == null || !installResult.isSuccess) {
+            return "install gms core failed: "
+                    + (installResult == null ? "no result" : installResult.error);
         }
 
         updateMessage(activity, dialog, "installing gms service framework...");
         installResult = VirtualCore.get().installPackage(gmsServiceFile.getAbsolutePath(), InstallStrategy.UPDATE_IF_EXIST);
-        if (!installResult.isSuccess) {
-            return "install gms service framework failed: " + installResult.error;
+        if (installResult == null || !installResult.isSuccess) {
+            return "install gms service framework failed: "
+                    + (installResult == null ? "no result" : installResult.error);
         }
 
         updateMessage(activity, dialog, "installing gms store...");
         installResult = VirtualCore.get().installPackage(storeFile.getAbsolutePath(), InstallStrategy.UPDATE_IF_EXIST);
-        if (!installResult.isSuccess) {
-            return "install gms store failed: " + installResult.error;
+        if (installResult == null || !installResult.isSuccess) {
+            return "install gms store failed: "
+                    + (installResult == null ? "no result" : installResult.error);
         }
 
         updateMessage(activity, dialog, "installing gms Xposed module...");
         installResult = VirtualCore.get().installPackage(fakeGappsFile.getAbsolutePath(), InstallStrategy.UPDATE_IF_EXIST);
-        if (!installResult.isSuccess) {
-            return "install gms xposed module failed: " + installResult.error;
+        if (installResult == null || !installResult.isSuccess) {
+            return "install gms xposed module failed: "
+                    + (installResult == null ? "no result" : installResult.error);
         }
 
         if (yalpStoreFile.exists()) {

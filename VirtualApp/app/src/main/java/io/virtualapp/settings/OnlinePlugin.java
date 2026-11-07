@@ -151,8 +151,9 @@ public class OnlinePlugin {
         updateMessage(activity, dialog, "installing " + packageName);
 
         InstallResult installResult = VirtualCore.get().installPackage(outFile.getAbsolutePath(), InstallStrategy.UPDATE_IF_EXIST);
-        if (!installResult.isSuccess) {
-            return "install " + packageName + " failed: " + installResult.error;
+        if (installResult == null || !installResult.isSuccess) {
+            return "install " + packageName + " failed: "
+                    + (installResult == null ? "no result" : installResult.error);
         }
 
         if (isXposed) {

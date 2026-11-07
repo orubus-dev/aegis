@@ -1,19 +1,42 @@
 apply plugin: 'com.android.application'
 
-Properties properties = new Properties()
-def localProp = file(project.rootProject.file('local.properties'))
-if (localProp.exists()) {
-    properties.load(localProp.newDataInputStream())
-}
-def keyFile = file(properties.getProperty("keystore.path") ?: "/tmp/does_not_exist")
+// ---------------------------------------------------------------------------
+// Aegis release signing
+//
+// CI (release.yml) provides the keystore via environment variables:
+//   AEGIS_KEYSTORE_BASE64     base64 of the release keystore
+//   AEGIS_KEYSTORE_PASSWORD   keystore password
+//   AEGIS_KEY_ALIAS           key alias
+//   AEGIS_KEY_PASSWORD        key password
+//
+// Local development falls back to the debug keystore so `assembleAospRelease`
+// always produces an installable APK even without the secrets present.
+// ---------------------------------------------------------------------------
+def keystoreB64 = System.getenv("AEGIS_KEYSTORE_BASE64")
+def keystorePass = System.getenv("AEGIS_KEYSTORE_PASSWORD")
+def keyAliasEnv = System.getenv("AEGIS_KEY_ALIAS")
+def keyPassEnv = System.getenv("AEGIS_KEY_PASSWORD")
+def ciSigning = keystoreB64 != null && !keystoreB64.trim().isEmpty()
+        && keystorePass != null && !keystorePass.trim().isEmpty()
 
 android {
     signingConfigs {
-        config {
-            keyAlias properties.getProperty("keystore.alias")
-            keyPassword properties.getProperty("keystore.pwd")
-            storeFile keyFile
-            storePassword properties.getProperty("keystore.alias_pwd")
+        aegisRelease {
+            if (ciSigning) {
+                def ksFile = new File(project.buildDir, "signing/aegis-release.jks")
+                ksFile.parentFile.mkdirs()
+                ksFile.bytes = new String(keystoreB64).decodeBase64()
+                storeFile ksFile
+                storePassword keystorePass
+                keyAlias (keyAliasEnv ?: "aegis")
+                keyPassword (keyPassEnv ?: keystorePass)
+            } else {
+                // local fallback: debug keystore, so release builds install
+                storeFile debug.storeFile
+                storePassword debug.storePassword
+                keyAlias debug.keyAlias
+                keyPassword debug.keyPassword
+            }
         }
     }
 
@@ -22,8 +45,8 @@ android {
         applicationId "app.orubus.aegis"
         minSdkVersion 21
         targetSdkVersion 24
-        versionCode 300
-        versionName "1.0.0-m1"
+        versionCode 301
+        versionName "1.0.0"
         multiDexEnabled false
         android {
             defaultConfig {
@@ -39,9 +62,6 @@ android {
         aosp {
             dimension 'main'
             //matchingFallbacks ['aosp']
-            if (keyFile.exists()) {
-                signingConfig signingConfigs.config
-            }
         }
 
         fdroid {
@@ -57,6 +77,10 @@ android {
         release {
             minifyEnabled false
             debuggable false
+            signingConfig signingConfigs.aegisRelease
+        }
+        debug {
+            // keep upstream behavior; debug builds sign with the debug key
         }
     }
     compileOptions {

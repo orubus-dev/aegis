@@ -44,10 +44,23 @@ public class AegisSettingsActivity extends Activity {
                 startActivity(new Intent(this, ApkImportActivity.class)));
         row(R.id.aegis_row_vault, R.string.aegis_row_vault, v ->
                 startActivity(new Intent(this, com.aegis.os.vault.VaultListActivity.class)));
+        TextView vaultAuto = findViewById(R.id.aegis_row_vault_auto);
+        if (vaultAuto != null) {
+            updateVaultAutoLabel(vaultAuto);
+            vaultAuto.setOnClickListener(v -> {
+                boolean next = !com.aegis.os.vault.VaultAutoImport.isEnabled(this);
+                com.aegis.os.vault.VaultAutoImport.setEnabled(this, next);
+                Diagnostics.log(this, "vault auto-import "
+                        + (next ? "enabled" : "disabled"));
+                updateVaultAutoLabel(vaultAuto);
+            });
+        }
         row(R.id.aegis_row_camera, R.string.aegis_row_camera, v ->
                 startActivity(new Intent(this, com.aegis.os.vault.VaultCameraActivity.class)));
         row(R.id.aegis_row_engine, R.string.aegis_row_engine, v ->
                 startActivity(new Intent(this, SettingsActivity.class)));
+        row(R.id.aegis_row_diag, R.string.aegis_row_diag, v ->
+                startActivity(new Intent(this, DiagnosticsActivity.class)));
         row(R.id.aegis_row_about, R.string.aegis_row_about, v ->
                 startActivity(new Intent(this, AboutActivity.class)));
     }
@@ -56,8 +69,15 @@ public class AegisSettingsActivity extends Activity {
         try {
             return getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
         } catch (Throwable e) {
-            return "1.0.0-m1";
+            return "1.0.0";
         }
+    }
+
+    private void updateVaultAutoLabel(TextView row) {
+        boolean on = com.aegis.os.vault.VaultAutoImport.isEnabled(this);
+        row.setText(on
+                ? getString(R.string.aegis_row_vault_auto_on)
+                : getString(R.string.aegis_row_vault_auto_off));
     }
 
     private interface RowClick {

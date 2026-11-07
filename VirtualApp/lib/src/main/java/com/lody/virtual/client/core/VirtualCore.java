@@ -43,6 +43,7 @@ import com.lody.virtual.client.ipc.VPackageManager;
 import com.lody.virtual.client.stub.VASettings;
 import com.lody.virtual.helper.compat.BundleCompat;
 import com.lody.virtual.helper.utils.BitmapUtils;
+import com.lody.virtual.helper.utils.VLog;
 import com.lody.virtual.os.VUserHandle;
 import com.lody.virtual.remote.InstallResult;
 import com.lody.virtual.remote.InstalledAppInfo;
@@ -192,6 +193,11 @@ public final class VirtualCore {
 
             VASettings.STUB_CP_AUTHORITY = context.getPackageName() + "." + VASettings.STUB_DEF_AUTHORITY;
             ServiceManagerNative.SERVICE_CP_AUTH = context.getPackageName() + "." + ServiceManagerNative.SERVICE_DEF_AUTH;
+            // Aegis: replace the AIDL-generated silent-null Default impls with
+            // throwing ones, so a failed binder transaction (frozen ":x"
+            // engine process, startup race) surfaces as an error instead of
+            // a null InstallResult.
+            AidlGuard.install();
             this.context = context;
             mainThread = ActivityThread.currentActivityThread.call();
             unHookPackageManager = context.getPackageManager();
@@ -354,10 +360,47 @@ public final class VirtualCore {
     }
 
     public InstallResult installPackage(String apkPath, int flags) {
-        try {
-            return getService().installPackage(apkPath, flags);
-        } catch (RemoteException e) {
-            return VirtualRuntime.crash(e);
+        // One retry: the engine (":x") process can be frozen by the OS cache
+        // freezer between uses; the first transaction after a wake-up can
+        // fail while the retry succeeds.  With the AidlGuard installed a
+        // failed transaction throws instead of returning null, so we can
+        // catch it here and give the engine a beat to unfreeze.
+        for (int attempt = 0; ; attempt++) {
+            try {
+                InstallResult res = getService().installPackage(apkPath, flags);
+                if (res == null) {
+                    // Never hand callers a null result: the field-finding NPE in
+                    // the UI ("isSuccess on a null object reference") shipped to
+                    // testers came from exactly this. Surface a real message.
+                    return InstallResult.makeFailure(
+                            "engine returned no result (path=" + apkPath + ")");
+                }
+                return res;
+            } catch (RemoteException e) {
+                return VirtualRuntime.crash(e);
+            } catch (com.lody.virtual.client.env.DeadServerException e) {
+                if (attempt >= 1) {
+                    VLog.e("VirtualCore", "installPackage failed for " + apkPath
+                            + ": " + e);
+                    return InstallResult.makeFailure(
+                            "engine unreachable: " + e.getMessage());
+                }
+                try {
+                    Thread.sleep(400);
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
+                    return InstallResult.makeFailure("interrupted while waking engine");
+                }
+            } catch (Throwable t) {
+                // Any other server-side crash used to escape as a raw
+                // NPE/RuntimeException and crash the installer UI. Log the
+                // real cause and report it through the result instead.
+                VLog.e("VirtualCore", "installPackage failed for " + apkPath
+                        + ": " + t);
+                VLog.e("VirtualCore", t);
+                return InstallResult.makeFailure(
+                        t.getClass().getSimpleName() + ": " + t.getMessage());
+            }
         }
     }
 

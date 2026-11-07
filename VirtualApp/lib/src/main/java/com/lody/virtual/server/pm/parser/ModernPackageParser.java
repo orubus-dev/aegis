@@ -58,6 +58,7 @@ public final class ModernPackageParser {
     private static final String ANDROID_NS = "http://schemas.android.com/apk/res/android";
     private static final String MANIFEST_FILE = "AndroidManifest.xml";
 
+    private static final String TAG_MANIFEST = "manifest";
     private static final String TAG_APPLICATION = "application";
     private static final String TAG_ACTIVITY = "activity";
     private static final String TAG_ACTIVITY_ALIAS = "activity-alias";
@@ -488,6 +489,7 @@ public final class ModernPackageParser {
                                      Map<String, List<IntentFilter>> filters,
                                      Map<String, String> aliases) throws Exception {
         boolean inApplication = false;
+        String manifestPackage = null; // <manifest android:package=...> value
         String component = null;      // current component class or alias name
         String aliasTarget = null;    // target activity when component is an alias
         List<IntentFilter> pending = null;
@@ -496,17 +498,24 @@ public final class ModernPackageParser {
         for (int event = p.getEventType(); event != XmlPullParser.END_DOCUMENT; event = p.next()) {
             String tag = p.getName();
             if (event == XmlPullParser.START_TAG) {
-                if (TAG_APPLICATION.equals(tag)) {
+                if (TAG_MANIFEST.equals(tag)) {
+                    // capture the real package name so component names can be
+                    // normalized at INSERT time -- the lookup side uses the
+                    // platform-expanded names from PackageInfo, so storing raw
+                    // ".MainActivity" keys made every lookup miss and left
+                    // the whole launcher empty (installed apps never showed).
+                    manifestPackage = attr(p, "package");
+                } else if (TAG_APPLICATION.equals(tag)) {
                     inApplication = true;
                 } else if (inApplication && (TAG_ACTIVITY.equals(tag)
                         || TAG_SERVICE.equals(tag) || TAG_RECEIVER.equals(tag)
                         || TAG_PROVIDER.equals(tag))) {
-                    component = attr(p, "name");
+                    component = normalizeClassName(manifestPackage, attr(p, "name"));
                     aliasTarget = null;
                     pending = new ArrayList<>();
                 } else if (inApplication && TAG_ACTIVITY_ALIAS.equals(tag)) {
-                    component = attr(p, "name");
-                    aliasTarget = attr(p, "targetActivity");
+                    component = normalizeClassName(manifestPackage, attr(p, "name"));
+                    aliasTarget = normalizeClassName(manifestPackage, attr(p, "targetActivity"));
                     pending = new ArrayList<>();
                 } else if (component != null && TAG_INTENT_FILTER.equals(tag)) {
                     filter = new IntentFilter();

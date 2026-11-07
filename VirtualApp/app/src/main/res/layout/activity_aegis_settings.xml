@@ -96,6 +96,11 @@
                 android:text="@string/aegis_row_vault" />
 
             <TextView
+                android:id="@+id/aegis_row_vault_auto"
+                style="@style/AegisSettingsRow"
+                android:text="@string/aegis_row_vault_auto" />
+
+            <TextView
                 android:id="@+id/aegis_row_camera"
                 style="@style/AegisSettingsRow"
                 android:text="@string/aegis_row_camera" />
@@ -113,6 +118,11 @@
                 android:id="@+id/aegis_row_engine"
                 style="@style/AegisSettingsRow"
                 android:text="@string/aegis_row_engine" />
+
+            <TextView
+                android:id="@+id/aegis_row_diag"
+                style="@style/AegisSettingsRow"
+                android:text="@string/aegis_row_diag" />
 
             <TextView
                 android:id="@+id/aegis_row_about"

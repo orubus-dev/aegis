@@ -175,6 +175,12 @@
             android:theme="@android:style/Theme.Material" />
 
         <activity
+            android:name="com.aegis.os.DiagnosticsActivity"
+            android:label="Diagnostics"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Material" />
+
+        <activity
             android:name="com.aegis.os.vault.VaultListActivity"
             android:label="Secure Vault"
             android:screenOrientation="portrait"

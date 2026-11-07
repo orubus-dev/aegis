@@ -213,6 +213,24 @@ Currently, EXposed has been put on the app store and renamed to Tai Chi. You can
     <string name="apk_import_failed">Install failed: %1$s</string>
     <string name="apk_import_failed_generic">Import failed \u2014 the file may not be a valid APK.</string>
 
+    <!-- Aegis diagnostics -->
+    <string name="aegis_row_diag">Diagnostics (install log)</string>
+    <string name="aegis_diag_title">Diagnostics</string>
+    <string name="aegis_diag_hint">Latest install attempts and engine errors. Copy this and send it with any bug report \u2014 it makes problems fixable.</string>
+    <string name="aegis_diag_copy">Copy log</string>
+    <string name="aegis_diag_clear">Clear</string>
+    <string name="aegis_diag_copied">Diagnostics copied</string>
+    <string name="aegis_diag_copy_failed">Could not copy</string>
+
+    <!-- Aegis vault auto-import -->
+    <string name="aegis_row_vault_auto">Guest media \u2192 vault (auto)</string>
+    <string name="aegis_row_vault_auto_on">Guest media \u2192 vault: ON \u2014 new photos &amp; videos guests take are encrypted and shredded from plaintext (tap to turn off)</string>
+    <string name="aegis_row_vault_auto_off">Guest media \u2192 vault: OFF \u2014 guest media stays in the container (tap to encrypt automatically)</string>
+    <plurals name="vault_auto_imported">
+        <item quantity="one">Moved %1$d media file into the encrypted vault</item>
+        <item quantity="other">Moved %1$d media files into the encrypted vault</item>
+    </plurals>
+
     <!-- Vault -->
     <string name="vault_title">Secure Vault</string>
     <string name="vault_hint">Everything here is encrypted with AES-256-GCM. Keys live in your phone\'s hardware keystore. Tap to open, long-press for export/delete.</string>

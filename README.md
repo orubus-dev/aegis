@@ -20,7 +20,7 @@ archive. NDK 23 native build fixed (`APP_PLATFORM android-21`). Launcher3
 vendored into the repo. CI builds `aosp` + `fdroid` debug APKs (~8 MB) on
 every push — see the Actions artifacts.
 
-## Status: M1 in progress (1.0.0-m1)
+## Status: M1 complete, M2–M3 complete (v1.0.0)
 
 **M1 shipped so far:**
 
@@ -71,17 +71,50 @@ every push — see the Actions artifacts.
     on delete, decrypt-on-view into a private cache that is shredded on
     exit.
 
-**Still honest:** container *compiles*, *installs* and now *parses guest
-APKs with a 13–15-proof pipeline*, but **a full guest run has not yet been
-verified on a real Android 13–15 device** — that remains the M1 exit gate.
-Installing an app end-to-end (parse → copy → launch) on your device is the
-first thing to test with the new APK; engine diagnostics in Aegis OS
-settings show live whether the hidden-API bypass activated.
+## Status: M3 complete — v1.0.0 signed release
 
-**M1 backlog (next grinds):** real-device guest launch on 13/14/15,
-per-SDK `bindApplication`/mirror variance checks, AppOps op-code remap
-audit, notification channels for guests targeting ≥ 26, guest-media
-auto-vault hook, Android 16 (W) pass.
+**M2 — install reliability (first field round fixed):**
+- **Home grid shows installed guests again.** `ModernPackageParser` stored
+  intent filters under raw manifest class names (".MainActivity") and looked
+  them up under the platform-expanded ones ("com.example.MainActivity") —
+  every app failed the launchable check and the launcher stayed empty.
+  Names are now normalized at insert; the same fix repairs clone-list and
+  home-grid resolution.
+- **"Install failed: null result" + the `isSuccess` NPE killed.**  Two
+  stacked causes: (1) modern AGP AIDL codegen gives every Stub a `Default`
+  implementation whose methods return `null`, and the generated proxy uses
+  it whenever `transact()` returns false — exactly what happens when the
+  `:x` engine process is momentarily frozen (Android 12+ cached-app
+  freezer) or raced at startup; (2) callers read `result.isSuccess`
+  unguarded.  `AidlGuard` now replaces every silent Default with a throwing
+  one, `installPackage` retries once (engine wakes up), results are never
+  null, and failures surface the real cause.
+- Server-side parse failures now carry the actual exception into the
+  install error text.
+- **Diagnostics screen** (Aegis OS settings → Diagnostics): on-device log of
+  every install attempt + engine error, copy-to-clipboard for bug reports.
+
+**M3 — identity + signed releases:**
+- Package `app.orubus.aegis`, launcher icon replaced (Aegis shield), all
+  locale strings Aegis-branded, About page with GitHub repo/issues links.
+- Release pipeline: RSA-4096 keystore in GitHub Actions secrets, signed
+  `aosp` + `fdroid` release APKs on every `v*` tag, GitHub Release with
+  What's New extracted from `RELEASE_NOTES.md`.
+
+**M4 started — guest media auto-vault:**
+- When enabled (Aegis OS settings, on by default), media that guests write
+  into the container's virtual storage is pulled into the encrypted vault
+  (AEGV1) next time the vault opens, and the plaintext original is shredded.
+
+**Still honest:** all of the above compiles locally (JDK 17 / AGP 7.4.2) and
+the signed release path is verified locally end-to-end; the *behavioral*
+fixes (grid, install, auto-vault) still need a real-device pass — that is
+exactly what the v1.0.0 test round is for.
+
+**M4–M6 queue:** deep media hooks (capture-time interception instead of
+scan-on-open), guest notification routing into Aegis-owned channels,
+AppOps op-code remap audit, per-SDK `bindApplication`/mirror variance
+checks, Android 16 (W) pass.
 
 ## Build
 

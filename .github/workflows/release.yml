@@ -1,0 +1,90 @@
+name: aegis-release
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Existing tag to release (e.g. v1.0.0)'
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout (with Launcher3 submodule)
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Resolve tag
+        id: tag
+        run: |
+          if [ -n "${{ inputs.tag }}" ]; then
+            echo "name=${{ inputs.tag }}" >> $GITHUB_OUTPUT
+          else
+            echo "name=${GITHUB_REF_NAME}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Decode release keystore
+        env:
+          AEGIS_KEYSTORE_BASE64: ${{ secrets.AEGIS_KEYSTORE_BASE64 }}
+        run: echo "$AEGIS_KEYSTORE_BASE64" | base64 -d > /tmp/aegis-release.jks
+
+      - name: Build signed release APKs
+        working-directory: VirtualApp
+        env:
+          AEGIS_KEYSTORE_BASE64: ${{ secrets.AEGIS_KEYSTORE_BASE64 }}
+          AEGIS_KEYSTORE_PASSWORD: ${{ secrets.AEGIS_KEYSTORE_PASSWORD }}
+          AEGIS_KEY_ALIAS: ${{ secrets.AEGIS_KEY_ALIAS }}
+          AEGIS_KEY_PASSWORD: ${{ secrets.AEGIS_KEY_PASSWORD }}
+        run: |
+          ./gradlew :app:assembleAospRelease :app:assembleFdroidRelease \
+            --stacktrace --no-daemon
+
+      - name: Collect and rename APKs
+        run: |
+          mkdir -p apks
+          VERSION="${GITHUB_REF_NAME#v}"
+          find VirtualApp/app/build/outputs/apk -name "*release*.apk" \
+            -path "*aosp*"   -exec cp {} "apks/Aegis-${VERSION}-aosp.apk"   \;
+          find VirtualApp/app/build/outputs/apk -name "*release*.apk" \
+            -path "*fdroid*" -exec cp {} "apks/Aegis-${VERSION}-fdroid.apk" \;
+          ls -la apks
+
+      - name: Extract release notes
+        run: |
+          TAG="${{ steps.tag.outputs.name }}"
+          if [ -f RELEASE_NOTES.md ]; then
+            awk -v tag="$TAG" '
+              $0 ~ "^## " tag "$" {flag=1; next}
+              /^## / {flag=0}
+              flag {print}
+            ' RELEASE_NOTES.md > notes.md
+          fi
+          if [ ! -s notes.md ]; then
+            echo "Aegis $TAG" > notes.md
+            echo "" >> notes.md
+            echo "See the repository for details." >> notes.md
+          fi
+          cat notes.md
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.tag.outputs.name }}
+        run: |
+          gh release create "$TAG" apks/*.apk \
+            --title "Aegis $TAG" \
+            --notes-file notes.md \
+            --latest || gh release upload "$TAG" apks/*.apk --clobber
