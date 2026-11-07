@@ -150,7 +150,7 @@ public class AegisPermissionsActivity extends Activity {
             if (iconDrawable != null) {
                 icon.setImageDrawable(iconDrawable);
             } else {
-                icon.setImageResource(R.drawable.ic_launcher);
+                icon.setImageResource(R.mipmap.ic_launcher);
             }
             return v;
         }

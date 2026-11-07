@@ -12,6 +12,8 @@ import android.view.SurfaceView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.aegis.os.Diagnostics;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.List;
