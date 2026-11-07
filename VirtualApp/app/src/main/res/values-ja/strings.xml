@@ -1,8 +1,8 @@
 
 <resources>
     <!--<string name="app_name">VirtualApp</string>-->
-    <string name="app_name">VirtualXposed</string>
-    <string name="vxp">VirtualXposed</string>
+    <string name="app_name">Aegis</string>
+    <string name="vxp">Aegis</string>
     <string name="wait">お待ちください…</string>
     <string name="desktop">デスクトップ</string>
     <string name="add_app">アプリを追加</string>
@@ -34,7 +34,7 @@
     <string name="install_success_tips">Xposedモジュールは、XposedInstallerのモジュール設定で有効にするまで有効になりません。</string>
     <string name="install_fail_tips">%1$s のインストールに失敗： %2$s</string>
     <string name="copy_right" translatable="false" >コピーライト(Copyright) © %1$d</string>
-    <string name="about_page_description">VirtualXposedは、rootアクセスを必要とせず、ブートローダのロックを解除し、システムイメージを変更することなくXposedモジュールを使用する機能を提供するアプリです。</string>
+    <string name="about_page_description">Aegis is a hidden operating system that runs on your phone. Apps installed inside Aegis live in an isolated sandbox: separate storage, virtual contacts and identity, and a private encrypted vault for photos and videos taken in Aegis. No root required.</string>
     <string name="about_feedback_qq_title">QQ グループ（クリックしてグループ番号をコピーする）</string>
     <string name="about_feedback_wechat_title">WeChat グループ (クリックしてコピー)</string>
     <string name="about_feedback_tips">グループ番号がクリップボードにコピーされました。</string>
@@ -44,25 +44,25 @@
     <string name="reboot_tips_2">正常に再起動しました。</string>
     <string name="reboot_tips_3">正常に再起動しました。</string>
     <string name="meizu_device_tips_title">Meizuデバイスを検出: </string>
-    <string name="meizu_device_tips_content">Meizu OSの携帯電話では、すでにインストールされている既存のアプリを複製することによってのみVirtualXposedにアプリを追加できます（apkのサイドロードを介してVirtualXposedにアプリをインストールすることはできません）。 他のAndroid携帯電話へのインストールとは異なり、Meizu OSへのインストール時にVirtualXposedに組み込まれていないため、XposedInstallerも手動でインストールする必要があります。 最初にXposedInstallerをインストールしてください。</string>
+    <string name="meizu_device_tips_content">Meizu OSの携帯電話では、すでにインストールされている既存のアプリを複製することによってのみAegisにアプリを追加できます（apkのサイドロードを介してAegisにアプリをインストールすることはできません）。 他のAndroid携帯電話へのインストールとは異なり、Meizu OSへのインストール時にAegisに組み込まれていないため、XposedInstallerも手動でインストールする必要があります。 最初にXposedInstallerをインストールしてください。</string>
     <string name="donate_alipay">アリペイ</string>
     <string name="donate_wepay">Wechat Pay</string>
     <string name="prompt_alipay_not_found">アリペイが見つかりません。</string>
     <string name="prompt_wait">少しお待ちください...</string>
     <string name="donate_dialog_title">寄付について</string>
-    <string name="donate_dialog_content">VirtualXposedの維持には私の時間がかかります。あなたが私の仕事に感謝しているなら、私に一杯のコーヒーを買ってください！</string>
+    <string name="donate_dialog_content">Aegisの維持には私の時間がかかります。あなたが私の仕事に感謝しているなら、私に一杯のコーヒーを買ってください！</string>
     <string name="donate_dialog_yes">寄付する</string>
     <string name="donate_dialog_no">キャンセル</string>
     <string name="large_app_install_tips">インストールにはしばらく時間がかかりますが、しばらくお待ちください…</string>
     <string name="about_icon_title">アイコンについて</string>
-    <string name="about_icon_content">私の新しいアイコンが気に入らない場合は、VirtualXposedの新しいアイコンをデザインしてください。</string>
+    <string name="about_icon_content">私の新しいアイコンが気に入らない場合は、Aegisの新しいアイコンをデザインしてください。</string>
     <string name="about_icon_yes">はい</string>
     <string name="create_shortcut_success">ショートカットが作成されました。</string>
     <string name="about_thanks">クレジット</string>
     <string name="thanks_dialog_title">クレジット</string>
-    <string name="thanks_dialog_content" >素晴らしいアイコンを提供してくれたCheneyに感謝し、そしてあなたの努力のためにPei、Peggy、そしてリストに載せられないほど多くの人たちに感謝します。 皆さんからいただいたアイデアや提案に感謝します。私のデザインを実現するための時間を割いてくれたYingLinに感謝します。</string>
+    <string name="thanks_dialog_content">Aegis is built on the VirtualApp engine (by asLody) and the VirtualXposed fork (by weishu/tiann), with hidden-API compatibility powered by LSPosed\u2019s HiddenApiBypass. Endless respect to the FOSS engineers whose work made this possible.</string>
     <string name="alert_for_doze_mode_title">ヒント</string>
-    <string name="alert_for_doze_mode_content">VirtualXposedをバックグラウンドで実行することを許可してください。そうしないと、一部の仮想アプリケーションから通知を受け取れない場合があります。</string>
+    <string name="alert_for_doze_mode_content">Aegisをバックグラウンドで実行することを許可してください。そうしないと、一部の仮想アプリケーションから通知を受け取れない場合があります。</string>
     <string name="alert_for_doze_mode_yes">許可</string>
     <string name="alert_for_doze_mode_no">拒否</string>
     <string name="about_faq_title">FAQ</string>
@@ -77,7 +77,7 @@
     <string name="add_app_loading_tips">%1$s のパッケージを解析中…</string>
     <string name="add_app_installing_tips">%1$s をインストール中…</string>
     <string name="add_app_loading_complete">%1$s のインストールが完了しました </string>
-    <string name="list_app_activity_install">VirtualXposedに追加</string>
+    <string name="list_app_activity_install">Aegisに追加</string>
     <string name="settings_about_text">このアプリについて</string>
     <string name="settings_task_manage_text">タスクを管理</string>
     <string name="settings_app_manage_text">アプリを管理</string>
@@ -86,8 +86,8 @@
     <string name="app_manage_repair">修復</string>
     <string name="settings_title">設定</string>
     <string name="task_manage_uninstall">プロセスをkill</string>
-    <string name="settings_reboot_title">VirtualXposedを再起動</string>
-    <string name="settings_reboot_content">これにより、現在VirtualXposedで実行されているすべてのアプリが強制終了されます。 再起動しますか？</string>
+    <string name="settings_reboot_title">Aegisを再起動</string>
+    <string name="settings_reboot_content">これにより、現在Aegisで実行されているすべてのアプリが強制終了されます。 再起動しますか？</string>
     <string name="check_update">アップデートをチェック</string>
     <string name="version_is_latest">最新バージョンがインストールされています。</string>
     <string name="new_version_detected">最新バージョン:</string>
@@ -100,7 +100,7 @@
     <string name="app_manage_repair_failed_tips" >すみません、修復は失敗しました。 このアプリを再インストールしてください。</string>
     <string name="app_manage_repairing">修復中...</string>
     <string name="app_manage_repair_success_title">修復のヒント</string>
-    <string name="app_manage_repair_success_content">修復しました。 それを有効にするためにVirtualXposedを強制停止してください。</string>
+    <string name="app_manage_repair_success_content">修復しました。 それを有効にするためにAegisを強制停止してください。</string>
     <string name="app_manage_repair_reboot_now">今すぐ再起動</string>
     <string name="wallpaper_too_big_tips">選択した壁紙は大きすぎるため、起動時間が長くなる可能性があります。適切なものを選択してください。</string>
     <string name="create_shortcut_already_exist">このショートカットは既に存在します</string>
@@ -110,22 +110,22 @@
     <string name="app_manage_redirect_desc">ストレージリダイレクションは、アプリケーションのアクセスを実際のSDカードから仮想SDカードにリダイレクトします。これにより、特定のアプリが実際のSDカードにディレクトリを作成することを防ぎます。 ただし、ストレージリダイレクトが有効になると、アプリケーションは実際のSDカードにアクセスできなくなります。 メッセージが表示されたら選択してください。</string>
     <string name="app_manage_redirect_on_confirm">開く、確認する</string>
     <string name="app_manage_redirect_off_confirm">閉じる、確認する</string>
-    <string name="shared_to_vxp">VirtualXposedでアプリを共有する</string>
+    <string name="shared_to_vxp">Aegisでアプリを共有する</string>
     <string name="shared_to_vxp_failed">共有に失敗しました。もう一度やり直してください。</string>
-    <string name="app_installer_label">VirtualXposedに追加</string>
+    <string name="app_installer_label">Aegisに追加</string>
     <string name="install_complete">完了</string>
     <string name="install_fail">%1$s インストール失敗</string>
     <string name="install">インストール</string>
     <string name="install_package">%s 新しいアプリをインストール</string>
     <string name="install_package_version_tips">既存のアプリを選択しました。\n（インストール済みバージョン：%1$s、選択したバージョン：%2$s）。 それをインストールしますか？</string>
-    <string name="settings_add_app_summary">最初にアプリとXposedモジュールの両方をVirtualXposedに追加してください。そうでない場合はXposedモジュールは有効になりません。</string>
+    <string name="settings_add_app_summary">最初にアプリとXposedモジュールの両方をAegisに追加してください。そうでない場合はXposedモジュールは有効になりません。</string>
     <string name="settings_advance">高度な設定</string>
     <string name="advance_settings_hide_settings">デスクトップの設定ボタンを隠す</string>
     <string name="advance_settings_disable_installer">システムのapkインストーラを無効にする</string>
-    <string name="advance_settings_hide_settings_summary">メインアクティビティのメニューキーで設定を入力できる場合は、これを非表示にすることができます。 それ以外の場合は設定を入力できない可能性があります。 \n（VirtualXposedを再起動して有効にしてください。）</string>
-    <string name="advance_settings_disable_installer_summary">システムでapkファイルを選択したときにVirtualXposedのインストーラを表示しない</string>
+    <string name="advance_settings_hide_settings_summary">メインアクティビティのメニューキーで設定を入力できる場合は、これを非表示にすることができます。 それ以外の場合は設定を入力できない可能性があります。 \n（Aegisを再起動して有効にしてください。）</string>
+    <string name="advance_settings_disable_installer_summary">システムでapkファイルを選択したときにAegisのインストーラを表示しない</string>
     <string name="advance_settings_directly_back">直接戻る</string>
-    <string name="advance_settings_directly_back_summary">仮想アプリで仮想ランチャーの代わりにシステムランチャーに戻ります。\n（有効にするにはVirtualXposedを再起動してください。）</string>
+    <string name="advance_settings_directly_back_summary">仮想アプリで仮想ランチャーの代わりにシステムランチャーに戻ります。\n（有効にするにはAegisを再起動してください。）</string>
     <string name="install_self_eggs">少年、あなたの考えは有望です</string>
     <string name="advance_settings_install_gms">Googleサービスのインストール/アンインストール</string>
     <string name="about_feedback_tel_title">Telegram グループ: %1$s</string>
@@ -135,10 +135,10 @@
     <string name="about_feedback_hint">お使いの携帯電話のモデル、Androidのバージョン、Xposedプラグイン、対応するアプリケーションのバージョンを指定してから、発生している問題をできるだけ詳細に説明してください。そうしないと無効なフィードバックと見なされます。 トラブルシューティングし、唯一の「このアプリがクラッシュします」で上記の問題を解決します。</string>
     <string name="settings_plugin_recommend">推奨Xposedモジュール</string>
     <string name="advance_settings_disable_resident_notification">持続通知を無効にする</string>
-    <string name="advance_settings_disable_resident_notification_summary">VirtualXposedの永続通知を無効にします。 （無効にすると、VirtualXposedはシステムによって頻繁にkillされるかもしれません。注意して使ってください！）</string>
+    <string name="advance_settings_disable_resident_notification_summary">Aegisの永続通知を無効にします。 （無効にすると、Aegisはシステムによって頻繁にkillされるかもしれません。注意して使ってください！）</string>
     <string name="settings_module_manage">Xposedモジュールを管理</string>
     <string name="settings_module_manage_summary">Xposedモジュールを有効/無効にする（有効にするには手動で有効にする必要があります）</string>
-    <string name="xposed_installer_not_found">Xposedインストーラが見つかりません。最初にVirtualXposedに追加してください。</string>
+    <string name="xposed_installer_not_found">Xposedインストーラが見つかりません。最初にAegisに追加してください。</string>
     <string name="advance_settings_allow_fake_signature_summary">有効にすると、署名のないapkをインストールすることができます（通常、クラックされた/変更されたアプリに適用されます。注意してください。
 ）</string>
     <string name="advance_settings_allow_fake_signature">署名なしでapkをインストールすることを許可します。</string>
@@ -146,9 +146,9 @@
     <string name="permission_tips_content">%1$s  ランタイムパーミッションをサポートしていません、あなたはそれが必要とするパーミッションを前もって与えなければなりません、それが次のステップで要求するすべてのパーミッションを許してください、さもなければそれは適切に働かないかもしれません。</string>
     <string name="permission_tips_confirm">はい</string>
     <string name="permission_denied_tips_content">アプリ: %1$s 必要な権限を付与していません。正しく機能しない場合は、デバイスの権限管理にアクセスして権限を付与してください。</string>
-    <string name="list_app_access_external_storage">外部ストレージからapkをインストールしたい場合は、VirtualXposedに許可を与えてください。</string>
+    <string name="list_app_access_external_storage">外部ストレージからapkをインストールしたい場合は、Aegisに許可を与えてください。</string>
     <string name="install_gms_title" >Googleサービスをインストール</string>
-    <string name="install_gms_content">GoogleサービスはmicroGによってサポートされています、VirtualXposedはいくつかのファイル（2M）をダウンロードしようとしています、そしてそれはより多くのバッテリーを消費するかもしれません、あなたはそれをインストールしますか？</string>
+    <string name="install_gms_content">GoogleサービスはmicroGによってサポートされています、Aegisはいくつかのファイル（2M）をダウンロードしようとしています、そしてそれはより多くのバッテリーを消費するかもしれません、あなたはそれをインストールしますか？</string>
     <string name="install_gms_fail_title">インストール失敗</string>
     <string name="install_gms_fail_content">Googleサービスのインストールが自動的に失敗した場合は、手動でインストールすることもできます。</string>
     <string name="install_gms_fail_ok">手動インストール</string>
@@ -169,16 +169,16 @@
     <string name="install_permission_manager_tips">パーミッションマネージャーはXPrivacyLuaによって実装され、ダウンロード（約1.7M）して今すぐインストールしますか？</string>
     <string name="exp_tips">昔、私はEXposedについての情報を明らかにしました。 フィードバックと調整の期間を経て、Exposedはマイルストーンに達しました。 多くのユーザーはそれを知らないかもしれません、今日あなたに紹介させてください。 \n\n
 
-私が以前に作成したVirtualXposedのように、EXposedはあなたがrootなしでXposedモジュールを使用するようにするアプリでもあり、ブートローダをアンロックします。 どちらにも独自の利点があり、ネイティブシステムで直接実行することで、パフォーマンスと安定性の面でExposedの方がはるかに優れています。 VirtualXposedは、Parallel SpaceのようなVitualAppに基づいています。 EXposedは1か月で生まれました、そしてその安定性はほぼ1年間開発されてきたVirtualXposedを超えました。 \n\n
+私が以前に作成したAegisのように、EXposedはあなたがrootなしでXposedモジュールを使用するようにするアプリでもあり、ブートローダをアンロックします。 どちらにも独自の利点があり、ネイティブシステムで直接実行することで、パフォーマンスと安定性の面でExposedの方がはるかに優れています。 Aegisは、Parallel SpaceのようなVitualAppに基づいています。 EXposedは1か月で生まれました、そしてその安定性はほぼ1年間開発されてきたAegisを超えました。 \n\n
 
 現在、ExposedはApp Storeに置かれ、Tai Chiに改名されました。 試してみることができます。</string>
-    <string name="advance_settings_enable_launcher_summary">有効にすると、VirtualXposedをシステムのランチャーに設定できます。</string>
+    <string name="advance_settings_enable_launcher_summary">有効にすると、Aegisをシステムのランチャーに設定できます。</string>
     <string name="advance_settings_enable_launcher">ランチャーを有効にする</string>
     <string name="exp_introduce_title">Xposedを使う簡単な方法</string>
     <string name="exp_introduce_install">試してみる</string>
     <string name="what_is_exp">TaiChiって何？</string>
     <string name="install_choose_way">インストール方法を選択</string>
-    <string name="install_choose_content" >VirtualXposed以外のTaiChiを介してXposedモジュールを使用できます。 TaiChiがはるかに安定している間VirtualXposedはVirtual-Appをサポートします。</string>
+    <string name="install_choose_content" >Aegis以外のTaiChiを介してXposedモジュールを使用できます。 TaiChiがはるかに安定している間AegisはVirtual-Appをサポートします。</string>
     <string name="install_choose_taichi">TaiChi</string>
     <string name="install_taichi_not_exist">TaiChiはインストールされていません！</string>
     <string name="install_go_to_install_exp">TaiChiのインストール</string>
@@ -186,4 +186,6 @@
     <string name="install_go_latest_exp">最新のTaiChiをインストール</string>
     <string name="install_complete_and_open">開く</string>
     <string name="unsupported_for_32bit_app">32ビットアプリケーションはサポートされていません。</string>
+    <string name="about_github_title">Fork Aegis on GitHub</string>
+    <string name="about_issues_title">Report an issue on GitHub</string>
 </resources>

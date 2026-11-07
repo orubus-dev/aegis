@@ -19,11 +19,11 @@ android {
 
     compileSdkVersion 28
     defaultConfig {
-        applicationId "io.va.exposed64"
+        applicationId "app.orubus.aegis"
         minSdkVersion 21
         targetSdkVersion 24
-        versionCode 221
-        versionName "0.23.0-aegis-m1"
+        versionCode 300
+        versionName "1.0.0-m1"
         multiDexEnabled false
         android {
             defaultConfig {

@@ -31,7 +31,7 @@ public class AegisSettingsActivity extends Activity {
         setContentView(R.layout.activity_aegis_settings);
 
         TextView version = findViewById(R.id.aegis_version);
-        version.setText(getString(R.string.aegis_version_line, "1.0.0-m1", "Android " + Build.VERSION.RELEASE));
+        version.setText(getString(R.string.aegis_version_line, readVersionName(), "Android " + Build.VERSION.RELEASE));
 
         TextView status = findViewById(R.id.aegis_engine_status);
         status.setText(describeEngine());
@@ -50,6 +50,14 @@ public class AegisSettingsActivity extends Activity {
                 startActivity(new Intent(this, SettingsActivity.class)));
         row(R.id.aegis_row_about, R.string.aegis_row_about, v ->
                 startActivity(new Intent(this, AboutActivity.class)));
+    }
+
+    private String readVersionName() {
+        try {
+            return getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
+        } catch (Throwable e) {
+            return "1.0.0-m1";
+        }
     }
 
     private interface RowClick {

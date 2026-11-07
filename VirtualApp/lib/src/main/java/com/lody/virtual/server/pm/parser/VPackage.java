@@ -271,6 +271,10 @@ public class VPackage implements Parcelable {
 
         public ActivityComponent activity;
 
+        public ActivityIntentInfo() {
+            super();
+        }
+
         public ActivityIntentInfo(PackageParser.IntentInfo info) {
             super(info);
         }
@@ -283,6 +287,10 @@ public class VPackage implements Parcelable {
     public static class ServiceIntentInfo extends IntentInfo {
         public ServiceComponent service;
 
+        public ServiceIntentInfo() {
+            super();
+        }
+
         public ServiceIntentInfo(PackageParser.IntentInfo info) {
             super(info);
         }
@@ -294,6 +302,10 @@ public class VPackage implements Parcelable {
 
     public static class ProviderIntentInfo extends IntentInfo {
         public ProviderComponent provider;
+
+        public ProviderIntentInfo() {
+            super();
+        }
 
         public ProviderIntentInfo(PackageParser.IntentInfo info) {
             super(info);
@@ -323,6 +335,9 @@ public class VPackage implements Parcelable {
         public int icon;
         public int logo;
         public int banner;
+
+        public IntentInfo() {
+        }
 
         public IntentInfo(PackageParser.IntentInfo info) {
             this.filter = info;
@@ -398,6 +413,9 @@ public class VPackage implements Parcelable {
     public static class ActivityComponent extends Component<ActivityIntentInfo> {
         public ActivityInfo info;
 
+        public ActivityComponent() {
+        }
+
         public ActivityComponent(PackageParser.Activity activity) {
             super(activity);
             if (activity.intents != null) {
@@ -423,6 +441,9 @@ public class VPackage implements Parcelable {
 
     public static class ServiceComponent extends Component<ServiceIntentInfo> {
         public ServiceInfo info;
+
+        public ServiceComponent() {
+        }
 
         public ServiceComponent(PackageParser.Service service) {
             super(service);
@@ -450,6 +471,9 @@ public class VPackage implements Parcelable {
     public static class ProviderComponent extends Component<ProviderIntentInfo> {
         public ProviderInfo info;
 
+        public ProviderComponent() {
+        }
+
         public ProviderComponent(PackageParser.Provider provider) {
             super(provider);
             if (provider.intents != null) {
@@ -475,6 +499,9 @@ public class VPackage implements Parcelable {
 
     public static class InstrumentationComponent extends Component<IntentInfo> {
         public InstrumentationInfo info;
+
+        public InstrumentationComponent() {
+        }
 
         public InstrumentationComponent(PackageParser.Instrumentation i) {
             super(i);
@@ -539,6 +566,9 @@ public class VPackage implements Parcelable {
 
         public PermissionInfo info;
 
+        public PermissionComponent() {
+        }
+
         public PermissionComponent(PackageParser.Permission p) {
             super(p);
             this.info = p.info;
@@ -559,6 +589,9 @@ public class VPackage implements Parcelable {
     public static class PermissionGroupComponent extends Component<IntentInfo> {
         public PermissionGroupInfo info;
 
+
+        public PermissionGroupComponent() {
+        }
 
         public PermissionGroupComponent(PackageParser.PermissionGroup p) {
             super(p);

@@ -1,6 +1,9 @@
 <resources>
     <!--Avoid to be Override By library-->
-    <string name="app_name">VirtualXposed</string>
+    <string name="app_name">Aegis</string>
     <string name="versionchecklib_confirm">Upgrade now</string>
-    <string name="list_app_access_external_storage">If you want to install apk from external storage, please give VirtualXposed the permission.</string>
+    <string name="list_app_access_external_storage">If you want to install apk from external storage, please give Aegis the permission.</string>
+    <string name="about_github_title">Fork Aegis on GitHub</string>
+    <string name="about_issues_title">Report an issue on GitHub</string>
+    <string name="thanks_dialog_content">Aegis is built on the VirtualApp engine (by asLody) and the VirtualXposed fork (by weishu/tiann), with hidden-API compatibility powered by LSPosed\u2019s HiddenApiBypass. Endless respect to the FOSS engineers whose work made this possible.</string>
 </resources>

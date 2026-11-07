@@ -119,7 +119,7 @@ public class ListAppFragment extends VFragment<ListAppContract.ListAppPresenter>
                         showInstallDialog.show();
                     }
                     finishActivity();
-                }).setNegativeButton("VirtualXposed", (dialog, which) -> {
+                }).setNegativeButton("Aegis", (dialog, which) -> {
                     if (runnable != null) {
                         runnable.run();
                     }

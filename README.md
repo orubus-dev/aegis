@@ -20,7 +20,7 @@ archive. NDK 23 native build fixed (`APP_PLATFORM android-21`). Launcher3
 vendored into the repo. CI builds `aosp` + `fdroid` debug APKs (~8 MB) on
 every push — see the Actions artifacts.
 
-## Status: M1 in progress (0.23.0-aegis-m1)
+## Status: M1 in progress (1.0.0-m1)
 
 **M1 shipped so far:**
 
@@ -43,6 +43,26 @@ every push — see the Actions artifacts.
     **import from APK file** (SAF — installs into the container only,
     never on the device), Secure Vault, Secure Camera, engine diagnostics.
   - Home label → "Aegis"; upstream donation dialog removed.
+- *Install pipeline rebuilt for Android 13–15 (fixes "Unable to parse the
+  package")*
+  - Root cause: the legacy install path reflected into
+    `android.content.pm.PackageParser`, which **AOSP deleted in Android 14**
+    — on 13–15 every install died at parse. New `ModernPackageParser` builds
+    the engine's `VPackage` from the **public**
+    `PackageManager.getPackageArchiveInfo()` plus a self-contained manifest
+    walk (intent filters, `activity-alias` expansion with relative-name
+    normalization, split-APK directories). No framework `PackageParser`
+    anywhere; identical behavior on 13/14/15, legacy reflection kept only
+    as a below-API-33 fallback.
+  - Native-lib extraction gained a framework-free zip fallback (ABI chosen
+    by `Build.SUPPORTED_ABIS` preference order) in case the hidden
+    `NativeLibraryHelper` is blocked on a future release.
+- *Full rebrand: Aegis*
+  - Package name **`app.orubus.aegis`** (was `io.va.exposed64`), version
+    unified to `1.0.0-m1`.
+  - Every visible "VirtualXposed" string replaced across all 10 locale
+    files; About page rebuilt (GitHub repo + issue tracker links, upstream
+    credits dialog, old Telegram/QQ/website elements removed).
 - *Aegis Vault (at-rest crypto)*
   - `AEGV1` format: AndroidKeyStore AES-256 master key (StrongBox when
     available), fresh 256-bit key per file wrapped by the master key,
@@ -51,14 +71,17 @@ every push — see the Actions artifacts.
     on delete, decrypt-on-view into a private cache that is shredded on
     exit.
 
-**Still honest:** container *compiles* and *installs* on Android 13–15
-(targetSdk 24), but **guest runtime verification on real 13–15 devices is
-the remaining M1 work**. The fixes above are the known-correct ones; the
-claim "guests run on 13–15" waits for a real device run of a real guest app.
+**Still honest:** container *compiles*, *installs* and now *parses guest
+APKs with a 13–15-proof pipeline*, but **a full guest run has not yet been
+verified on a real Android 13–15 device** — that remains the M1 exit gate.
+Installing an app end-to-end (parse → copy → launch) on your device is the
+first thing to test with the new APK; engine diagnostics in Aegis OS
+settings show live whether the hidden-API bypass activated.
 
-**M1 backlog (next grinds):** per-SDK `bindApplication`/mirror variance
-checks on 13/14/15, AppOps op-code remap audit, notification channels for
-guests targeting ≥ 26, guest-media auto-vault hook, Android 16 (W) pass.
+**M1 backlog (next grinds):** real-device guest launch on 13/14/15,
+per-SDK `bindApplication`/mirror variance checks, AppOps op-code remap
+audit, notification channels for guests targeting ≥ 26, guest-media
+auto-vault hook, Android 16 (W) pass.
 
 ## Build
 
