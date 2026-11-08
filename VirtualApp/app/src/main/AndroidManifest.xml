@@ -19,9 +19,9 @@
         android:theme="@style/LauncherTheme"
         tools:replace="android:icon,android:label">
         <!-- Aegis: usesCleartextTraffic stays ON because the sandbox hosts
-             guest apps inside this process -- once the host targets 28+,
-             Android blocks plain-HTTP guest traffic by default and guest
-             apps would silently lose connectivity. -->
+             guest apps inside this process. Once the host targets API 28
+             or higher, Android blocks plain HTTP guest traffic by default
+             and guest apps would silently lose connectivity. -->
 
         <meta-data
             android:name="android.max_aspect"
