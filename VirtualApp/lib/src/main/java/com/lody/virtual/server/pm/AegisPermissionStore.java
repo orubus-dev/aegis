@@ -58,11 +58,16 @@ public final class AegisPermissionStore {
             if (f.exists()) {
                 FileInputStream in = null;
                 try {
-                    byte[] buf = new byte[(int) f.length()];
+                    // Read fully: a single read() can return early and truncate
+                    // the JSON, which then poisons every later parse.
+                    java.io.ByteArrayOutputStream bos = new java.io.ByteArrayOutputStream();
+                    byte[] chunk = new byte[4096];
                     in = new FileInputStream(f);
-                    int read = in.read(buf);
-                    in.close();
-                    obj = new JSONObject(new String(buf, 0, Math.max(read, 0), "UTF-8"));
+                    int n;
+                    while ((n = in.read(chunk)) != -1) {
+                        bos.write(chunk, 0, n);
+                    }
+                    obj = new JSONObject(bos.toString("UTF-8"));
                 } catch (Throwable t) {
                     VLog.w(TAG, "unreadable permission store, starting clean: " + t);
                     obj = new JSONObject();
@@ -133,7 +138,19 @@ public final class AegisPermissionStore {
     }
 
     private static JSONObject overridesRoot() {
-        return state().optJSONObject("overrides");
+        synchronized (LOCK) {
+            JSONObject root = sState == null ? null : sState.optJSONObject("overrides");
+            if (root == null) {
+                // A corrupt or missing "overrides" node must never NPE the
+                // engine process -- self-heal it in place instead.
+                root = new JSONObject();
+                try {
+                    state().put("overrides", root);
+                } catch (Throwable ignored) {
+                }
+            }
+            return root;
+        }
     }
 
     private static String key(String pkg, int userId) {
@@ -148,6 +165,18 @@ public final class AegisPermissionStore {
     public static final int VERDICT_UNSET = 0;
 
     public static int checkPermission(String permName, String pkgName, int userId) {
+        try {
+            return checkPermissionInner(permName, pkgName, userId);
+        } catch (Throwable t) {
+            // This runs on the engine's binder thread for EVERY guest
+            // permission check; a throw here would take the whole sandbox
+            // down ("keeps stopping").  Fall back to the legacy verdict.
+            VLog.w(TAG, "checkPermission failed, falling back to granted: " + t);
+            return PackageManager.PERMISSION_GRANTED;
+        }
+    }
+
+    private static int checkPermissionInner(String permName, String pkgName, int userId) {
         if (permName == null || pkgName == null) {
             return PackageManager.PERMISSION_DENIED;
         }
@@ -177,15 +206,18 @@ public final class AegisPermissionStore {
     /** Map of permission -> granted state for one app (may be empty). */
     public static Map<String, Boolean> overridesFor(String pkgName, int userId) {
         Map<String, Boolean> out = new HashMap<>();
-        synchronized (LOCK) {
-            JSONObject perApp = overridesRoot().optJSONObject(key(pkgName, userId));
-            if (perApp != null) {
-                Iterator<String> it = perApp.keys();
-                while (it.hasNext()) {
-                    String p = it.next();
-                    out.put(p, perApp.optBoolean(p, true));
+        try {
+            synchronized (LOCK) {
+                JSONObject perApp = overridesRoot().optJSONObject(key(pkgName, userId));
+                if (perApp != null) {
+                    Iterator<String> it = perApp.keys();
+                    while (it.hasNext()) {
+                        String p = it.next();
+                        out.put(p, perApp.optBoolean(p, true));
+                    }
                 }
             }
+        } catch (Throwable ignored) {
         }
         return out;
     }
@@ -209,10 +241,13 @@ public final class AegisPermissionStore {
 
     public static void clearOverride(String pkgName, int userId, String permName) {
         synchronized (LOCK) {
-            JSONObject perApp = overridesRoot().optJSONObject(key(pkgName, userId));
-            if (perApp != null && perApp.has(permName)) {
-                perApp.remove(permName);
-                persistLocked();
+            try {
+                JSONObject perApp = overridesRoot().optJSONObject(key(pkgName, userId));
+                if (perApp != null && perApp.has(permName)) {
+                    perApp.remove(permName);
+                    persistLocked();
+                }
+            } catch (Throwable ignored) {
             }
         }
     }

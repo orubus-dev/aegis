@@ -115,9 +115,28 @@ public class Installd {
             }
         }).then((res) -> {
             if (addResult.appData == null) {
-                addResult.appData = PackageAppDataStorage.get().acquire(info.packageName);
+                try {
+                    addResult.appData = PackageAppDataStorage.get().acquire(info.packageName);
+                } catch (Throwable t) {
+                    // Aegis: a failed storage acquire must not take the UI down.
+                    com.aegis.os.Diagnostics.log(XApp.getApp(),
+                            "clone: post-install data acquire failed for "
+                                    + info.packageName, t);
+                }
             }
         }).done(res -> {
+            if (addResult.appData == null) {
+                // Install actually succeeded but we cannot build a launcher
+                // model for it -- tell the user instead of crashing.
+                com.aegis.os.Diagnostics.log(XApp.getApp(),
+                        "clone: installed " + info.packageName
+                                + " but no launcher model could be created");
+                if (refreshListener != null) {
+                    refreshListener.fail("Installed, but the app list could not be refreshed. "
+                            + "Reopen Aegis to see it.");
+                }
+                return;
+            }
             boolean multipleVersion = addResult.justEnableHidden && addResult.userId != 0;
             if (!multipleVersion) {
                 PackageAppData data = addResult.appData;
@@ -139,6 +158,14 @@ public class Installd {
                 handleOptApp(data, info.packageName, false, refreshListener);
             }
         }).fail(result -> {
+            // Aegis: every clone failure goes to the diagnostics log so field
+            // testers can paste it without adb.
+            try {
+                com.aegis.os.Diagnostics.log(XApp.getApp(),
+                        "clone: FAILED pkg=" + info.packageName
+                                + " error=" + result.getMessage());
+            } catch (Throwable ignored) {
+            }
             if (refreshListener != null) {
                 refreshListener.fail(result.getMessage());
 

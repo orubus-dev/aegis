@@ -65,6 +65,62 @@ public final class Diagnostics {
         append(ctx, sb.toString());
     }
 
+    /**
+     * Aegis crash black box: an uncaught exception is killing the process.
+     * Write the FULL stack (crashes are rare -- depth is cheap) plus the
+     * process name so a user-pasted log identifies which process died
+     * (main UI / engine ":x" / guest ":p#pkg").
+     */
+    public static synchronized void logCrash(Context ctx, Thread thread, Throwable t) {
+        StringBuilder sb = new StringBuilder(stamp()).append(" CRASH in process ")
+                .append(processName())
+                .append(" thread ").append(thread == null ? "?" : thread.getName());
+        if (t != null) {
+            sb.append(" -- ").append(t.getClass().getName());
+            if (t.getMessage() != null) {
+                sb.append(": ").append(t.getMessage());
+            }
+            StackTraceElement[] st = t.getStackTrace();
+            int frames = Math.min(st == null ? 0 : st.length, 48);
+            for (int i = 0; i < frames; i++) {
+                sb.append("\n    at ").append(st[i]);
+            }
+            Throwable cause = t.getCause();
+            int depth = 0;
+            while (cause != null && depth < 4) {
+                sb.append("\n  Caused by ").append(cause.getClass().getName());
+                if (cause.getMessage() != null) {
+                    sb.append(": ").append(cause.getMessage());
+                }
+                StackTraceElement[] cst = cause.getStackTrace();
+                int cframes = Math.min(cst == null ? 0 : cst.length, 16);
+                for (int i = 0; i < cframes; i++) {
+                    sb.append("\n    at ").append(cst[i]);
+                }
+                cause = cause.getCause();
+                depth++;
+            }
+        }
+        append(ctx, sb.toString());
+    }
+
+    private static String processName() {
+        try {
+            java.io.BufferedReader r = new java.io.BufferedReader(
+                    new java.io.FileReader("/proc/self/cmdline"));
+            String line = r.readLine();
+            r.close();
+            if (line != null) {
+                line = line.trim();
+                if (line.length() > 0) {
+                    return line.replace('\0', ' ').trim();
+                }
+            }
+        } catch (Throwable ignored) {
+        }
+        return "unknown";
+    }
+
     /** Returns up to {@code maxLines} most recent lines, oldest first. */
     public static synchronized String readLast(Context ctx, int maxLines) {
         File f = file(ctx);

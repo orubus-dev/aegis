@@ -23,7 +23,12 @@ public class PackageAppData implements AppData {
     public PackageAppData(Context context, InstalledAppInfo installedAppInfo) {
         this.packageName = installedAppInfo.packageName;
         this.isFirstOpen = !installedAppInfo.isLaunched(0);
-        loadData(context, installedAppInfo.getApplicationInfo(installedAppInfo.getInstalledUsers()[0]));
+        // Aegis: a ghost registry entry can report zero installed users;
+        // indexing [0] used to blow up the whole drawer load.  Fall back to
+        // user 0 instead of crashing.
+        int[] users = installedAppInfo.getInstalledUsers();
+        int firstUser = (users != null && users.length > 0) ? users[0] : 0;
+        loadData(context, installedAppInfo.getApplicationInfo(firstUser));
     }
 
     public PackageAppData(Context context, ApplicationInfo appInfo) {

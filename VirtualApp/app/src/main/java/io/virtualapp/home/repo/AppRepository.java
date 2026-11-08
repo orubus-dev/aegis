@@ -195,12 +195,21 @@ public class AppRepository implements AppDataSource {
             info.fastOpen = fastOpen;
             info.path = path;
             info.icon = null;  // Use Glide to load the icon async
-            info.name = ai.loadLabel(pm);
+            // Aegis: some sideloaded APKs carry broken labels; loadLabel used
+            // to throw Resources.NotFoundException and kill the whole list.
+            try {
+                CharSequence label = ai.loadLabel(pm);
+                info.name = label != null ? label.toString() : pkg.packageName;
+            } catch (Throwable t) {
+                info.name = pkg.packageName;
+            }
             info.version = pkg.versionName;
             info.splitApk = splitApk;
             InstalledAppInfo installedAppInfo = VirtualCore.get().getInstalledAppInfo(pkg.packageName, 0);
             if (installedAppInfo != null) {
-                info.cloneCount = installedAppInfo.getInstalledUsers().length;
+                // Aegis: ghost entries can report a null user array.
+                int[] installedUsers = installedAppInfo.getInstalledUsers();
+                info.cloneCount = installedUsers == null ? 0 : installedUsers.length;
             }
             if (ai.metaData != null && ai.metaData.containsKey("xposedmodule")) {
                 info.disableMultiVersion = true;
@@ -208,11 +217,19 @@ public class AppRepository implements AppDataSource {
             }
             list.add(info);
         }
-        // sort by name
+        // sort by name (null-safe: a broken APK can leave the label null)
         Collections.sort(list, (o1, o2) -> {
             HanziToPinyin hanziToPinyin = HanziToPinyin.getInstance();
-            String pinyin1 = hanziToPinyin.toPinyinString(o1.name.toString().trim());
-            String pinyin2 = hanziToPinyin.toPinyinString(o2.name.toString().trim());
+            String name1 = o1.name == null ? "" : o1.name.toString().trim();
+            String name2 = o2.name == null ? "" : o2.name.toString().trim();
+            String pinyin1 = hanziToPinyin.toPinyinString(name1);
+            String pinyin2 = hanziToPinyin.toPinyinString(name2);
+            if (pinyin1 == null) {
+                pinyin1 = name1;
+            }
+            if (pinyin2 == null) {
+                pinyin2 = name2;
+            }
             return pinyin1.compareTo(pinyin2);
         });
         return list;

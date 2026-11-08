@@ -3,6 +3,49 @@
 Each `## <tag>` section below becomes the "What's new" text of the matching
 GitHub Release. Keep the newest section at the top.
 
+## v1.1.1
+
+**Aegis 1.1.1 — crash-proofing round, built from your screenshots.** Your
+two screenshots told two different stories, and both are addressed here.
+
+### Fixed
+- **"This app was built for an older version of Android" warning — gone.**
+  Aegis still targeted an old API level (24). The host now targets API 29:
+  no more warning dialog on modern Android, and guest apps keep plain-HTTP
+  networking (cleartext stays enabled on purpose inside the sandbox).
+- **The "keeps stopping" crash loop, root-caused as far as the screenshots
+  allow.** A "ghost" registry entry — a package that registered but never
+  finished installing, exactly like the stuck one in your logs — used to be
+  enough to kill the app: the drawer indexed an empty user list and threw.
+  Now every one of those paths is guarded, so a broken record can no longer
+  take Aegis down with it.
+- **Ghost entries now heal themselves on boot.** A package with a registry
+  record but no user state is resurrected automatically (user 0 re-attached,
+  data untouched) — it simply appears in the drawer after this update. If
+  yours still doesn't show, one re-clone definitely does it.
+- **Engine boot can no longer crash from one corrupt cache.** Each cached
+  package loads inside its own guard: a bad entry is purged and logged, not
+  fatal.
+- **Simulated-permission store hardened.** The permission check runs on a
+  binder thread for every guest action; a corrupt store now self-repairs
+  and falls back to the legacy verdict instead of crashing the sandbox.
+- **Install/clone failures are unmissable.** Every clone failure is written
+  to diagnostics with the real reason; a successful install whose launcher
+  entry can't be built now says so instead of crashing.
+
+### Added
+- **Crash black box.** Aegis now records every uncaught exception (full
+  stack, which process, which thread) into Diagnostics. If it ever "keeps
+  stopping" again: open Aegis OS → Diagnostics → Copy log — the paste will
+  contain the exact crash line, and fixes become one round-trip.
+
+### Notes for testers
+- Update, open Aegis, and check whether the previously stuck app now shows
+  in the drawer. If yes — done. If not, clone it once more (that path is
+  fixed and re-install-safe).
+- The old warning dialog should not appear anymore. If it does, send the
+  screenshot with the Diagnostics log.
+
 ## v1.1.0
 
 **Aegis 1.1.0 — the install bug is dead, and the OS-in-OS gets a real

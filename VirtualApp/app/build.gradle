@@ -40,13 +40,17 @@ android {
         }
     }
 
-    compileSdkVersion 28
+    // Aegis: compile/target 29 -- targeting 24 made modern Android show the
+    // "This app was built for an older version of Android" warning on every
+    // launch.  29 clears the warning while staying below the harsh behavior
+    // cliffs (31 exported components / PendingIntent flags, 34 FGS types).
+    compileSdkVersion 29
     defaultConfig {
         applicationId "app.orubus.aegis"
         minSdkVersion 21
-        targetSdkVersion 24
-        versionCode 302
-        versionName "1.1.0"
+        targetSdkVersion 29
+        versionCode 303
+        versionName "1.1.1"
         multiDexEnabled false
         android {
             defaultConfig {

@@ -242,12 +242,18 @@ public class VPackageManagerService extends IPackageManager.Stub {
         // Aegis simulated permissions: every guest gets its own grant state
         // (see AegisPermissionStore).  With simulation off we keep the legacy
         // behavior of mirroring the host's own grants.
-        if (AegisPermissionStore.isSimulationEnabled()) {
-            int verdict = AegisPermissionStore.checkPermission(permName, pkgName, userId);
-            if (verdict != AegisPermissionStore.VERDICT_UNSET) {
-                return verdict;
+        // Never let a store hiccup escape a binder call: fall back to the
+        // legacy mirror instead of killing the sandbox process.
+        try {
+            if (com.lody.virtual.server.pm.AegisPermissionStore.isSimulationEnabled()) {
+                int verdict = com.lody.virtual.server.pm.AegisPermissionStore.checkPermission(permName, pkgName, userId);
+                if (verdict != com.lody.virtual.server.pm.AegisPermissionStore.VERDICT_UNSET) {
+                    return verdict;
+                }
+                return PackageManager.PERMISSION_GRANTED;
             }
-            return PackageManager.PERMISSION_GRANTED;
+        } catch (Throwable t) {
+            Log.w("VPackageManagerService", "simulated permission check failed, mirroring host", t);
         }
         return VirtualCore.get().getPackageManager().checkPermission(permName, VirtualCore.get().getHostPkg());
     }

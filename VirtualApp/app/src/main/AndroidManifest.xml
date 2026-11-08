@@ -13,10 +13,15 @@
     <application
         android:name=".XApp"
         android:allowBackup="true"
+        android:usesCleartextTraffic="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/vxp"
         android:theme="@style/LauncherTheme"
         tools:replace="android:icon,android:label">
+        <!-- Aegis: usesCleartextTraffic stays ON because the sandbox hosts
+             guest apps inside this process -- once the host targets 28+,
+             Android blocks plain-HTTP guest traffic by default and guest
+             apps would silently lose connectivity. -->
 
         <meta-data
             android:name="android.max_aspect"

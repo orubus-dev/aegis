@@ -117,16 +117,66 @@ public class VAppManagerService extends IAppManager.Stub {
         // packages are invisible in the launcher and block reinstall with
         // "version downrange".  Re-attach filters from the stored base APK;
         // purge the entry entirely if it is beyond repair.
-        int repair = ModernPackageParser.repairIntentFilters(pkg, new File(ps.apkPath));
-        if (repair == ModernPackageParser.REPAIR_FAILED) {
-            VLog.w(TAG, "loadPackage: entry for " + ps.packageName
-                    + " is corrupt (no launchable filters, launcher declared) -- purging");
+        // Aegis: the whole boot path must never throw -- one corrupt cache
+        // file used to take the whole app down with it ("keeps stopping").
+        try {
+            int repair = ModernPackageParser.repairIntentFilters(pkg, new File(ps.apkPath));
+            if (repair == ModernPackageParser.REPAIR_FAILED) {
+                VLog.w(TAG, "loadPackage: entry for " + ps.packageName
+                        + " is corrupt (no launchable filters, launcher declared) -- purging");
+                return false;
+            }
+        } catch (Throwable t) {
+            VLog.w(TAG, "loadPackage: repair of " + ps.packageName
+                    + " crashed unexpectedly -- purging to keep boot alive: " + t);
             return false;
         }
-        chmodPackageDictionary(cacheFile);
-        PackageCacheManager.put(pkg, ps);
-        BroadcastSystem.get().startApp(pkg);
+        try {
+            chmodPackageDictionary(cacheFile);
+            PackageCacheManager.put(pkg, ps);
+            BroadcastSystem.get().startApp(pkg);
+        } catch (Throwable t) {
+            VLog.w(TAG, "loadPackage: registration of " + ps.packageName
+                    + " failed -- purging to keep boot alive: " + t);
+            return false;
+        }
+        healMissingUserState(ps);
         return true;
+    }
+
+    /**
+     * Aegis: a ghost entry is a package whose registry record survived but
+     * whose per-user "installed" flags did not (a crash mid-install used to
+     * leave exactly that state).  Result: the app is invisible in the drawer,
+     * yet every reinstall was refused with "version downrange".  Re-attaching
+     * user 0 resurrects the app with all its data intact -- no re-clone.
+     */
+    private void healMissingUserState(PackageSetting ps) {
+        try {
+            int[] userIds = VUserManagerService.get().getUserIds();
+            boolean anyUser = false;
+            for (int userId : userIds) {
+                if (ps.readUserState(userId).installed) {
+                    anyUser = true;
+                    break;
+                }
+            }
+            if (!anyUser) {
+                if (VUserManagerService.get().exists(0)) {
+                    ps.setInstalled(0, true);
+                    notifyAppInstalled(ps, 0);
+                    mPersistenceLayer.save();
+                    VLog.w(TAG, "loadPackage: healed missing user state for "
+                            + ps.packageName + " (ghost entry resurrected)");
+                } else {
+                    VLog.w(TAG, "loadPackage: " + ps.packageName
+                            + " has no user state and no user 0 -- leaving untouched");
+                }
+            }
+        } catch (Throwable t) {
+            VLog.w(TAG, "loadPackage: user-state heal failed for "
+                    + ps.packageName + ": " + t);
+        }
     }
 
     @Override

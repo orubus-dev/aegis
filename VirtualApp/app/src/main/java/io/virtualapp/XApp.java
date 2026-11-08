@@ -44,8 +44,37 @@ public class XApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        installCrashBlackBox();
         VirtualCore virtualCore = VirtualCore.get();
         virtualCore.initialize(new MyVirtualInitializer(this, virtualCore));
+    }
+
+    /**
+     * Aegis crash black box.  Field testers have no adb/logcat: the only way
+     * a "keeps stopping" report becomes actionable is if the stack trace is
+     * written to the persistent diagnostics file at the moment of death.
+     * Installed in Application.onCreate so every Aegis process is covered
+     * (main UI, engine ":x" and guest ":p" processes all use XApp).
+     */
+    private void installCrashBlackBox() {
+        try {
+            final Thread.UncaughtExceptionHandler previous =
+                    Thread.getDefaultUncaughtExceptionHandler();
+            Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+                @Override
+                public void uncaughtException(Thread thread, Throwable throwable) {
+                    try {
+                        com.aegis.os.Diagnostics.logCrash(XApp.this, thread, throwable);
+                    } catch (Throwable ignored) {
+                        // last resort must never itself crash
+                    }
+                    if (previous != null) {
+                        previous.uncaughtException(thread, throwable);
+                    }
+                }
+            });
+        } catch (Throwable ignored) {
+        }
     }
 
 }
