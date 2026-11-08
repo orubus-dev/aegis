@@ -20,14 +20,31 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
+          # Aegis: cache the wrapper + dependencies so a flaky
+          # services.gradle.org moment cannot fail the build.
+          cache: gradle
 
       - name: Build AOSP debug APK
         working-directory: VirtualApp
-        run: ./gradlew :app:assembleAospDebug --stacktrace --no-daemon
+        run: |
+          for i in 1 2 3; do
+            ./gradlew :app:assembleAospDebug --stacktrace --no-daemon && break
+            echo "attempt $i failed, retrying in 45s..."
+            rm -rf ~/.gradle/wrapper/dists/gradle-*/*.part
+            sleep 45
+          done
+          ./gradlew :app:assembleAospDebug --stacktrace --no-daemon
 
       - name: Build F-Droid debug APK
         working-directory: VirtualApp
-        run: ./gradlew :app:assembleFdroidDebug --stacktrace --no-daemon
+        run: |
+          for i in 1 2 3; do
+            ./gradlew :app:assembleFdroidDebug --stacktrace --no-daemon && break
+            echo "attempt $i failed, retrying in 45s..."
+            rm -rf ~/.gradle/wrapper/dists/gradle-*/*.part
+            sleep 45
+          done
+          ./gradlew :app:assembleFdroidDebug --stacktrace --no-daemon
 
       - name: Collect APKs
         run: |

@@ -35,6 +35,9 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
+          # Aegis: cache the wrapper + dependencies so a flaky
+          # services.gradle.org moment cannot fail a release.
+          cache: gradle
 
       - name: Decode release keystore
         env:
@@ -49,8 +52,18 @@ jobs:
           AEGIS_KEY_ALIAS: ${{ secrets.AEGIS_KEY_ALIAS }}
           AEGIS_KEY_PASSWORD: ${{ secrets.AEGIS_KEY_PASSWORD }}
         run: |
-          ./gradlew :app:assembleAospRelease :app:assembleFdroidRelease \
-            --stacktrace --no-daemon
+          ok=0
+          for i in 1 2 3; do
+            ./gradlew :app:assembleAospRelease :app:assembleFdroidRelease \
+              --stacktrace --no-daemon && ok=1 && break
+            echo "attempt $i failed, retrying in 45s..."
+            rm -rf ~/.gradle/wrapper/dists/gradle-*/*.part
+            sleep 45
+          done
+          if [ "$ok" != "1" ]; then
+            echo "Gradle build failed after retries"
+            exit 1
+          fi
 
       - name: Collect and rename APKs
         run: |
