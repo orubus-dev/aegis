@@ -27,22 +27,22 @@ jobs:
       - name: Build AOSP debug APK
         working-directory: VirtualApp
         run: |
-          for i in 1 2 3; do
+          for i in 1 2 3 4 5; do
             ./gradlew :app:assembleAospDebug --stacktrace --no-daemon && break
             echo "attempt $i failed, retrying in 45s..."
             rm -rf ~/.gradle/wrapper/dists/gradle-*/*.part
-            sleep 45
+            sleep 30
           done
           ./gradlew :app:assembleAospDebug --stacktrace --no-daemon
 
       - name: Build F-Droid debug APK
         working-directory: VirtualApp
         run: |
-          for i in 1 2 3; do
+          for i in 1 2 3 4 5; do
             ./gradlew :app:assembleFdroidDebug --stacktrace --no-daemon && break
             echo "attempt $i failed, retrying in 45s..."
             rm -rf ~/.gradle/wrapper/dists/gradle-*/*.part
-            sleep 45
+            sleep 30
           done
           ./gradlew :app:assembleFdroidDebug --stacktrace --no-daemon
 

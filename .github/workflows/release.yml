@@ -53,12 +53,12 @@ jobs:
           AEGIS_KEY_PASSWORD: ${{ secrets.AEGIS_KEY_PASSWORD }}
         run: |
           ok=0
-          for i in 1 2 3; do
+          for i in 1 2 3 4 5; do
             ./gradlew :app:assembleAospRelease :app:assembleFdroidRelease \
               --stacktrace --no-daemon && ok=1 && break
             echo "attempt $i failed, retrying in 45s..."
             rm -rf ~/.gradle/wrapper/dists/gradle-*/*.part
-            sleep 45
+            sleep 30
           done
           if [ "$ok" != "1" ]; then
             echo "Gradle build failed after retries"
