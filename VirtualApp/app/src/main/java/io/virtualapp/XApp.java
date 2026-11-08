@@ -27,6 +27,9 @@ public class XApp extends Application {
 
     @Override
     protected void attachBaseContext(Context base) {
+        // Aegis: the black box goes in FIRST -- engine startup crashes
+        // (attachBaseContext) must be recorded too, not only UI crashes.
+        installCrashBlackBox();
         gApp = this;
         super.attachBaseContext(base);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -44,7 +47,7 @@ public class XApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        installCrashBlackBox();
+        // (crash black box already installed in attachBaseContext)
         VirtualCore virtualCore = VirtualCore.get();
         virtualCore.initialize(new MyVirtualInitializer(this, virtualCore));
     }
